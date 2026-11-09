@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Examen: Montaje de un PC</title>
+<style>
+:root{--bg:#f5f7fb;--card:#fff;--tx:#1b2333;--mut:#667;--ok:#16a34a;--bad:#dc2626;--ac:#2563eb;--bd:#d9dfec;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f1420;--card:#192032;--tx:#e8ecf5;--mut:#9aa4bd;--ok:#4ade80;--bad:#f87171;--ac:#60a5fa;--bd:#2b3550}}
+:root[data-theme="dark"]{--bg:#0f1420;--card:#192032;--tx:#e8ecf5;--mut:#9aa4bd;--ok:#4ade80;--bad:#f87171;--ac:#60a5fa;--bd:#2b3550}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font-family:system-ui,-apple-system,"Segoe UI",sans-serif;line-height:1.4}
+main{max-width:720px;margin:0 auto;padding:16px}
+h1{font-size:1.35rem;margin:0 0 6px}h2{font-size:1.1rem}
+.c{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:16px;margin-bottom:12px}
+.s{color:var(--mut)}
+input{width:100%;padding:12px;font:inherit;border:2px solid var(--bd);border-radius:10px;background:transparent;color:var(--tx);margin:8px 0}
+.b{width:100%;padding:13px;border:0;border-radius:12px;background:var(--ac);color:#fff;font:inherit;font-weight:700;margin-top:8px;cursor:pointer}
+.b:disabled{background:var(--bd);color:var(--mut)}
+.b.g{background:transparent;color:var(--tx);border:2px solid var(--bd)}
+.o{display:block;width:100%;text-align:left;padding:11px 12px;margin-top:8px;border:2px solid var(--bd);border-radius:10px;background:transparent;color:var(--tx);font:inherit;cursor:pointer}
+.o.on{border-color:var(--ac)}
+.track{height:8px;background:var(--bd);border-radius:6px;overflow:hidden;margin:8px 0}
+.fill{height:100%;background:var(--ac)}
+.big{font-size:2.4rem;font-weight:800;text-align:center;margin:4px 0}
+.ok{color:var(--ok)}.bad{color:var(--bad)}
+.rv{border-top:1px solid var(--bd);padding:10px 0;font-size:.92rem}
+.tw{overflow-x:auto}table{width:100%;border-collapse:collapse;font-size:.9rem}
+th,td{padding:8px;border-bottom:1px solid var(--bd);text-align:left;white-space:nowrap}
+.err{color:var(--bad);font-size:.9rem}
+</style>
+</head>
+<body>
+<main id="v"></main>
+<script>
+// [pregunta, [opciones], índice correcto, explicación]
+const Q=[
+["¿Qué componente se considera el «cerebro» del ordenador y ejecuta las instrucciones?",["La memoria RAM","La CPU (procesador)","La fuente de alimentación","El disco SSD"],1,"La CPU ejecuta las instrucciones y coordina al resto."],
+["¿Para qué sirve la pasta térmica entre la CPU y el disipador?",["Pegar el disipador para siempre","Aislar eléctricamente la CPU","Mejorar la transferencia de calor","Reducir el consumo eléctrico"],2,"Rellena imperfecciones y ayuda a que el calor pase al disipador."],
+["¿Qué es el «socket» de la placa base?",["El conector donde se instala la CPU","La ranura de la tarjeta gráfica","El puerto del monitor","El conector de la fuente"],0,"El socket (AM4, AM5, LGA1700…) debe coincidir con el de la CPU."],
+["¿Qué caracteriza a la memoria RAM?",["Guarda archivos para siempre","Es temporal, rápida y se borra al apagar","Solo guarda el sistema operativo","Se instala en el slot PCIe"],1,"Guarda lo que se está usando y se vacía al apagar."],
+["¿Principal diferencia entre un SSD y un HDD?",["El HDD no tiene partes móviles","El SSD solo va en portátiles","El SSD no guarda el sistema operativo","El SSD no tiene partes móviles y es más rápido"],3,"El SSD usa memoria flash: más rápido, silencioso y resistente."],
+["¿Función principal de la tarjeta gráfica (GPU)?",["Procesar imágenes y vídeo para el monitor","Conectar a internet","Enfriar la CPU","Guardar archivos"],0,"La GPU está especializada en cálculos gráficos."],
+["¿Qué hace la fuente de alimentación (PSU)?",["Almacena datos","Convierte corriente alterna en continua y la reparte","Controla la temperatura","Aumenta la velocidad de la CPU"],1,"Transforma los 230 V en 12 V, 5 V y 3,3 V."],
+["¿Qué se consigue con Dual Channel en la RAM?",["Que no se borre al apagar","Que consuma la mitad","Mayor ancho de banda al usar dos canales","Que la CPU funcione sin disipador"],2,"Dos módulos en canales distintos transfieren más datos por segundo."],
+["¿Para qué sirve el cable ATX de 24 pines?",["Alimentar la gráfica","Conectar el SSD","Conectar el teclado","Dar la alimentación principal a la placa base"],3,"Es el cable principal de la fuente hacia la placa base."],
+["¿Por qué se montan CPU, RAM y disipador antes de meter la placa en la caja?",["Hay más espacio y es más fácil manipular","La caja las estropearía","Así no hace falta fuente","Lo exige el sistema operativo"],0,"Fuera de la caja se trabaja con más comodidad y menos riesgo."],
+["¿Qué es el POST al encender el equipo?",["La instalación del sistema operativo","Un programa de vídeo","Un tipo de memoria","Una comprobación inicial del hardware"],3,"Power-On Self-Test: verifica los componentes básicos."],
+["¿Qué se puede configurar en la BIOS/UEFI?",["El fondo de pantalla","El orden de arranque de los dispositivos","Los programas instalados","La red Wi-Fi del instituto"],1,"Ahí se elige si arranca desde SSD, USB o red."],
+["¿Qué es un driver (controlador)?",["Un componente de la placa","Un tipo de cable","Un programa que permite al sistema comunicarse con un dispositivo","Una memoria de la gráfica"],2,"Sin driver, el sistema no aprovecha bien el hardware."],
+["¿Qué es Ubuntu?",["Una distribución de Linux libre y gratuita","Un antivirus de pago","Una marca de procesadores","Una versión de Windows"],0,"Ubuntu es Linux de código abierto."],
+["¿En qué ranura se instala una gráfica dedicada?",["En la ranura de la RAM","En el slot PCIe x16","En el socket de la CPU","En el conector SATA"],1,"El PCIe x16 es el más largo y rápido."],
+["¿Qué pasa si usas RAM DDR4 en una placa solo DDR5?",["Funciona más lenta","Funciona con disipador","Funciona con la mitad","No es compatible: no encajan"],3,"DDR4 y DDR5 tienen muescas y electricidad distintas."],
+["¿Cuál es únicamente un periférico de entrada?",["El altavoz","La impresora","El escáner","El monitor"],2,"El escáner solo introduce información."],
+["¿Cuál es un periférico de salida?",["La impresora","El ratón","El teclado","El micrófono"],0,"La impresora muestra datos en papel; los demás los introducen."],
+["¿Qué tipo de periférico es una pantalla táctil?",["Solo de salida","Solo de entrada","Mixto (entrada y salida)","De almacenamiento"],2,"Muestra información y detecta los toques."],
+["¿Qué puede pasar si la fuente no da potencia suficiente?",["El PC irá más rápido","La RAM crecerá","El SO se instalará solo","Puede apagarse, reiniciarse o no arrancar"],3,"Una fuente justa falla sobre todo con CPU y GPU a tope."]
+];
+const $=id=>document.getElementById(id),V=$("v");
+let db=null,uid=null,S={},unsub=null;
+(async()=>{try{db=await claude.use("db");const u=await claude.use("user");uid=u?await u.id():null}catch(e){db=null}})();
+const esc=t=>String(t).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+function home(msg){
+ if(unsub){unsub();unsub=null}
+ V.innerHTML=`<div class="c"><h1>🖥️ Examen: montaje de un PC</h1><p class="s">20 preguntas tipo test · 4 respuestas · 1 punto por acierto · los fallos no restan.</p>
+ <label>Nombre y apellidos del alumno</label><input id="nm" maxlength="60" placeholder="Ej: Lucía Pérez" value="${esc(S.nombre||"")}">
+ <div class="err" id="er">${msg||""}</div><button class="b" id="st">Empezar examen</button>
+ <button class="b g" id="tp">🔒 Panel del profesor</button></div>`;
+ $("st").onclick=()=>{const n=$("nm").value.trim();if(n.length<3){$("er").textContent="Escribe tu nombre completo para empezar.";return}S={nombre:n,i:0,r:[]};ask()};
+ $("tp").onclick=login;
+}
+function ask(){
+ const q=Q[S.i],sel=S.r[S.i];
+ V.innerHTML=`<div class="c"><div class="s">${esc(S.nombre)} · Pregunta ${S.i+1} de ${Q.length}</div><div class="track"><div class="fill" style="width:${S.i/Q.length*100}%"></div></div>
+ <h2>${esc(q[0])}</h2>`+q[1].map((o,k)=>`<button class="o ${sel===k?"on":""}" data-k="${k}">${"ABCD"[k]}) ${esc(o)}</button>`).join("")+
+ `<button class="b" id="nx" ${sel===undefined?"disabled":""}>${S.i===Q.length-1?"Entregar examen":"Siguiente →"}</button>
+ ${S.i>0?'<button class="b g" id="pv">← Anterior</button>':""}</div>`;
+ document.querySelectorAll(".o").forEach(b=>b.onclick=()=>{S.r[S.i]=+b.dataset.k;ask()});
+ $("nx").onclick=()=>{S.i===Q.length-1?finish():(S.i++,ask())};
+ if($("pv"))$("pv").onclick=()=>{S.i--;ask()};
+}
+async function finish(){
+ const ac=Q.reduce((s,q,i)=>s+(S.r[i]===q[2]?1:0),0),nota=Math.round(ac/Q.length*100)/10;
+ const rec={nombre:S.nombre,aciertos:ac,total:Q.length,nota,fecha:new Date().toISOString()};
+ V.innerHTML=`<div class="c"><div class="big ${nota>=5?"ok":"bad"}">${nota.toFixed(1)} / 10</div><p style="text-align:center"><b>${esc(S.nombre)}</b>: ${ac} aciertos de ${Q.length} · ${nota>=5?"Aprobado ✅":"Suspenso ❌"}</p><p class="s" id="sv" style="text-align:center">Guardando resultado…</p>
+ <button class="b" id="rp">Repetir examen</button></div><div class="c"><h2>Revisión</h2>`+Q.map((q,i)=>{const ok=S.r[i]===q[2];return `<div class="rv"><b>${i+1}. ${esc(q[0])}</b><br>${ok?'<span class="ok">✔ Correcta</span>':`<span class="bad">✘ Tu respuesta: ${S.r[i]===undefined?"sin responder":esc(q[1][S.r[i]])}</span><br>Correcta: ${esc(q[1][q[2]])}`}<br><span class="s">${esc(q[3])}</span></div>`}).join("")+`</div>`;
+ $("rp").onclick=()=>home();
+ $("sv").textContent=await save(rec);
+}
+async function save(r){
+ if(!db||!uid)return "⚠ Resultado no guardado: abre el enlace con tu cuenta de claude.ai para que el profesor lo vea.";
+ try{
+  const ref=db.doc("resultados/"+uid);let prev=[];
+  try{const s=await ref.get();if(s.exists)prev=s.data().intentos||[]}catch(e){}
+  prev.push(r);await ref.set({nombre:r.nombre,intentos:prev});return "✔ Resultado registrado para el profesor.";
+ }catch(e){return "⚠ No se pudo guardar el resultado ("+(e.code||"error")+"). Avisa al profesor."}
+}
+function login(){
+ V.innerHTML=`<div class="c"><h1>🔒 Panel del profesor</h1><input id="pw" type="password" inputmode="numeric" placeholder="Contraseña"><div class="err" id="er"></div><button class="b" id="ok">Entrar</button><button class="b g" id="bk">← Volver</button></div>`;
+ $("bk").onclick=()=>home();
+ $("ok").onclick=()=>{$("pw").value==="1111"?panel():$("er").textContent="Contraseña incorrecta."};
+}
+function panel(){
+ V.innerHTML=`<div class="c"><h1>📋 Resultados</h1><div id="rs" class="s">Cargando…</div></div><button class="b g" id="bk">← Salir del panel</button>`;
+ $("bk").onclick=()=>home();
+ if(!db){$("rs").textContent="Base de datos no disponible. Abre esta página con la cuenta del profesor (propietario).";return}
+ const t=setTimeout(()=>{if($("rs"))$("rs").textContent="No se pueden alcanzar los datos todavía…"},10000);
+ unsub=db.collection("resultados").onSnapshot(snap=>{
+  clearTimeout(t);
+  const rows=[];snap.docs.forEach(d=>(d.data().intentos||[]).forEach(x=>rows.push(x)));
+  rows.sort((a,b)=>b.fecha.localeCompare(a.fecha));
+  if(!$("rs"))return;
+  if(!rows.length){$("rs").textContent="Todavía no hay resultados registrados.";return}
+  const med=(rows.reduce((s,x)=>s+x.nota,0)/rows.length).toFixed(1),ap=rows.filter(x=>x.nota>=5).length;
+  $("rs").className="";
+  $("rs").innerHTML=`<p><b>${rows.length}</b> intentos · media <b>${med}</b> · aprobados <b>${ap}</b> (${Math.round(ap/rows.length*100)}%)</p><div class="tw"><table><tr><th>Alumno</th><th>Aciertos</th><th>Nota</th><th>Fecha</th></tr>`+rows.map(x=>`<tr><td>${esc(x.nombre)}</td><td>${x.aciertos}/${x.total}</td><td class="${x.nota>=5?"ok":"bad"}"><b>${x.nota.toFixed(1)}</b></td><td>${new Date(x.fecha).toLocaleString("es-ES")}</td></tr>`).join("")+`</table></div>`;
+ },e=>{clearTimeout(t);if($("rs"))$("rs").textContent="No tienes permiso para leer los resultados ("+(e.code||"error")+"). Entra como propietario o editor."});
+}
+home();
+</script>
+</body>
+</html>
