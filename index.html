@@ -29,6 +29,7 @@ input{width:100%;padding:12px;font:inherit;border:2px solid var(--bd);border-rad
 .tw{overflow-x:auto}table{width:100%;border-collapse:collapse;font-size:.9rem}
 th,td{padding:8px;border-bottom:1px solid var(--bd);text-align:left;white-space:nowrap}
 .err{color:var(--bad);font-size:.9rem}
+.ta{width:100%;font:12px ui-monospace,Menlo,monospace;background:transparent;color:var(--tx);border:2px solid var(--bd);border-radius:10px;padding:8px}
 </style>
 </head>
 <body>
@@ -58,8 +59,15 @@ const Q=[
 ["¿Qué puede pasar si la fuente no da potencia suficiente?",["El PC irá más rápido","La RAM crecerá","El SO se instalará solo","Puede apagarse, reiniciarse o no arrancar"],3,"Una fuente justa falla sobre todo con CPU y GPU a tope."]
 ];
 const $=id=>document.getElementById(id),V=$("v");
-let db=null,uid=null,S={},unsub=null;
-(async()=>{try{db=await claude.use("db");const u=await claude.use("user");uid=u?await u.id():null}catch(e){db=null}})();
+let S={},unsub=null;
+const KEY="montapc_examen_resultados_v1",SALT="MontaPC-2026";
+function load(){try{return JSON.parse(localStorage.getItem(KEY)||"[]")}catch(e){return[]}}
+function store(a){try{localStorage.setItem(KEY,JSON.stringify(a));return true}catch(e){return false}}
+function hash(r){const t=[r.nombre,r.aciertos,r.total,r.nota,r.fecha,SALT].join("|");let h=5381;for(const c of t)h=((h<<5)+h+c.charCodeAt(0))|0;return (h>>>0).toString(36)}
+function enc(r){return btoa(unescape(encodeURIComponent(JSON.stringify(r))))}
+function dec(t){return JSON.parse(decodeURIComponent(escape(atob(t.trim()))))}
+function add(r){if(!r||typeof r.nombre!=="string"||typeof r.aciertos!=="number"||hash(r)!==r.h)return 0;const a=load();if(a.some(x=>x.h===r.h))return -1;a.push(r);store(a);return 1}
+function download(name,txt,type){const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([txt],{type}));a.download=name;document.body.appendChild(a);a.click();a.remove()}
 const esc=t=>String(t).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 
 function home(msg){
@@ -88,14 +96,13 @@ async function finish(){
  <button class="b" id="rp">Repetir examen</button></div><div class="c"><h2>Revisión</h2>`+Q.map((q,i)=>{const ok=S.r[i]===q[2];return `<div class="rv"><b>${i+1}. ${esc(q[0])}</b><br>${ok?'<span class="ok">✔ Correcta</span>':`<span class="bad">✘ Tu respuesta: ${S.r[i]===undefined?"sin responder":esc(q[1][S.r[i]])}</span><br>Correcta: ${esc(q[1][q[2]])}`}<br><span class="s">${esc(q[3])}</span></div>`}).join("")+`</div>`;
  $("rp").onclick=()=>home();
  $("sv").textContent=await save(rec);
+ $("sv").insertAdjacentHTML("afterend",`<p class="s">Entrega este código a tu profesor (o descarga el archivo):</p><textarea id="cd" class="ta" readonly rows="3">${enc(rec)}</textarea><button class="b g" id="dl">⬇ Descargar archivo del resultado</button>`);
+ $("cd").onclick=()=>$("cd").select();
+ $("dl").onclick=()=>download("resultado_"+S.nombre.replace(/\W+/g,"_")+".json",JSON.stringify(rec),"application/json");
 }
 async function save(r){
- if(!db||!uid)return "⚠ Resultado no guardado: abre el enlace con tu cuenta de claude.ai para que el profesor lo vea.";
- try{
-  const ref=db.doc("resultados/"+uid);let prev=[];
-  try{const s=await ref.get();if(s.exists)prev=s.data().intentos||[]}catch(e){}
-  prev.push(r);await ref.set({nombre:r.nombre,intentos:prev});return "✔ Resultado registrado para el profesor.";
- }catch(e){return "⚠ No se pudo guardar el resultado ("+(e.code||"error")+"). Avisa al profesor."}
+ r.h=hash(r);const a=load();a.push(r);
+ return store(a)?"✔ Resultado guardado en este navegador.":"⚠ No se pudo guardar en este navegador: entrega el código de abajo a tu profesor.";
 }
 function login(){
  V.innerHTML=`<div class="c"><h1>🔒 Panel del profesor</h1><input id="pw" type="password" inputmode="numeric" placeholder="Contraseña"><div class="err" id="er"></div><button class="b" id="ok">Entrar</button><button class="b g" id="bk">← Volver</button></div>`;
@@ -103,20 +110,26 @@ function login(){
  $("ok").onclick=()=>{$("pw").value==="1111"?panel():$("er").textContent="Contraseña incorrecta."};
 }
 function panel(){
- V.innerHTML=`<div class="c"><h1>📋 Resultados</h1><div id="rs" class="s">Cargando…</div></div><button class="b g" id="bk">← Salir del panel</button>`;
- $("bk").onclick=()=>home();
- if(!db){$("rs").textContent="Base de datos no disponible. Abre esta página con la cuenta del profesor (propietario).";return}
- const t=setTimeout(()=>{if($("rs"))$("rs").textContent="No se pueden alcanzar los datos todavía…"},10000);
- unsub=db.collection("resultados").onSnapshot(snap=>{
-  clearTimeout(t);
-  const rows=[];snap.docs.forEach(d=>(d.data().intentos||[]).forEach(x=>rows.push(x)));
-  rows.sort((a,b)=>b.fecha.localeCompare(a.fecha));
-  if(!$("rs"))return;
-  if(!rows.length){$("rs").textContent="Todavía no hay resultados registrados.";return}
+ V.innerHTML=`<div class="c"><h1>📋 Resultados</h1><div id="rs"></div></div>
+ <div class="c"><h2>Importar resultados de alumnos</h2><p class="s">Pega los códigos (uno por línea) o carga los archivos .json de los alumnos.</p>
+ <textarea id="imp" class="ta" rows="3" placeholder="Pega aquí los códigos"></textarea><button class="b" id="ib">Importar códigos</button>
+ <input type="file" id="fi" accept=".json,application/json" multiple><div class="s" id="im"></div></div>
+ <div class="c"><button class="b g" id="ec">⬇ Exportar a CSV (Excel)</button><button class="b g" id="ej">⬇ Copia de seguridad (JSON)</button><button class="b g" id="bd">🗑 Borrar todos los resultados</button></div>
+ <button class="b g" id="bk">← Salir del panel</button>`;
+ const rep=(o,d,b)=>{$("im").textContent=`Importados: ${o} · repetidos: ${d} · no válidos: ${b}`;rs()};
+ function rs(){
+  const rows=load().sort((a,b)=>b.fecha.localeCompare(a.fecha));
+  if(!rows.length){$("rs").innerHTML='<p class="s">Todavía no hay resultados guardados en este navegador.</p>';return}
   const med=(rows.reduce((s,x)=>s+x.nota,0)/rows.length).toFixed(1),ap=rows.filter(x=>x.nota>=5).length;
-  $("rs").className="";
   $("rs").innerHTML=`<p><b>${rows.length}</b> intentos · media <b>${med}</b> · aprobados <b>${ap}</b> (${Math.round(ap/rows.length*100)}%)</p><div class="tw"><table><tr><th>Alumno</th><th>Aciertos</th><th>Nota</th><th>Fecha</th></tr>`+rows.map(x=>`<tr><td>${esc(x.nombre)}</td><td>${x.aciertos}/${x.total}</td><td class="${x.nota>=5?"ok":"bad"}"><b>${x.nota.toFixed(1)}</b></td><td>${new Date(x.fecha).toLocaleString("es-ES")}</td></tr>`).join("")+`</table></div>`;
- },e=>{clearTimeout(t);if($("rs"))$("rs").textContent="No tienes permiso para leer los resultados ("+(e.code||"error")+"). Entra como propietario o editor."});
+ }
+ $("ib").onclick=()=>{let o=0,d=0,b=0;$("imp").value.split(/\s+/).filter(Boolean).forEach(t=>{try{const r=add(dec(t));r===1?o++:r===-1?d++:b++}catch(e){b++}});rep(o,d,b)};
+ $("fi").onchange=async e=>{let o=0,d=0,b=0;for(const f of e.target.files){try{const x=JSON.parse(await f.text());for(const r of Array.isArray(x)?x:[x]){const k=add(r);k===1?o++:k===-1?d++:b++}}catch(er){b++}}rep(o,d,b)};
+ $("ec").onclick=()=>{const q=t=>'"'+String(t).replace(/"/g,'""')+'"';download("resultados_examen.csv","\ufeff"+["Alumno;Aciertos;Total;Nota;Fecha"].concat(load().map(x=>[q(x.nombre),x.aciertos,x.total,String(x.nota).replace(".",","),q(new Date(x.fecha).toLocaleString("es-ES"))].join(";"))).join("\r\n"),"text/csv")};
+ $("ej").onclick=()=>download("copia_resultados_examen.json",JSON.stringify(load()),"application/json");
+ $("bd").onclick=()=>{if(confirm("¿Borrar todos los resultados de este navegador? Esta acción no se puede deshacer.")){store([]);rs()}};
+ $("bk").onclick=()=>home();
+ rs();
 }
 home();
 </script>
