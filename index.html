@@ -68,6 +68,21 @@ function enc(r){return btoa(unescape(encodeURIComponent(JSON.stringify(r))))}
 function dec(t){return JSON.parse(decodeURIComponent(escape(atob(t.trim()))))}
 function add(r){if(!r||typeof r.nombre!=="string"||typeof r.aciertos!=="number"||hash(r)!==r.h)return 0;const a=load();if(a.some(x=>x.h===r.h))return -1;a.push(r);store(a);return 1}
 function download(name,txt,type){const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([txt],{type}));a.download=name;document.body.appendChild(a);a.click();a.remove()}
+const idb=()=>new Promise((res,rej)=>{const q=indexedDB.open("montapc",1);q.onupgradeneeded=()=>q.result.createObjectStore("k");q.onsuccess=()=>res(q.result);q.onerror=()=>rej(q.error)});
+async function kv(m,k,v){const d=await idb();return new Promise((res,rej)=>{const t=d.transaction("k",m==="get"?"readonly":"readwrite").objectStore("k"),q=m==="get"?t.get(k):t.put(v,k);q.onsuccess=()=>res(q.result);q.onerror=()=>rej(q.error)})}
+function txt(){
+ const rows=load().sort((a,b)=>a.fecha.localeCompare(b.fecha));
+ return "RESULTADOS DEL EXAMEN · MONTAJE DE UN PC\nActualizado: "+new Date().toLocaleString("es-ES")+"\n\n"+["ALUMNO | ACIERTOS | NOTA (0-10) | FECHA"].concat(rows.map(x=>`${x.nombre} | ${x.aciertos}/${x.total} | ${x.nota.toFixed(1)} | ${new Date(x.fecha).toLocaleString("es-ES")}`)).join("\n")+"\n";
+}
+async function syncFile(ask){
+ try{
+  const h=await kv("get","fh");if(!h)return "";
+  let p=await h.queryPermission({mode:"readwrite"});
+  if(p!=="granted"&&ask)p=await h.requestPermission({mode:"readwrite"});
+  if(p!=="granted")return "pending";
+  const w=await h.createWritable();await w.write(txt());await w.close();return "ok";
+ }catch(e){return ""}
+}
 const esc=t=>String(t).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 
 function home(msg){
@@ -102,7 +117,9 @@ async function finish(){
 }
 async function save(r){
  r.h=hash(r);const a=load();a.push(r);
- return store(a)?"✔ Resultado guardado en este navegador.":"⚠ No se pudo guardar en este navegador: entrega el código de abajo a tu profesor.";
+ if(!store(a))return "⚠ No se pudo guardar en este navegador: entrega el código de abajo a tu profesor.";
+ const f=await syncFile(false);
+ return "✔ Resultado guardado"+(f==="ok"?" y archivo resultados.txt actualizado.":f==="pending"?"; el profesor debe pulsar «Actualizar archivo» en su panel.":" en este navegador.");
 }
 function login(){
  V.innerHTML=`<div class="c"><h1>🔒 Panel del profesor</h1><input id="pw" type="password" inputmode="numeric" placeholder="Contraseña"><div class="err" id="er"></div><button class="b" id="ok">Entrar</button><button class="b g" id="bk">← Volver</button></div>`;
@@ -111,12 +128,14 @@ function login(){
 }
 function panel(){
  V.innerHTML=`<div class="c"><h1>📋 Resultados</h1><div id="rs"></div></div>
+ <div class="c"><h2>📄 Archivo de texto de notas</h2><p class="s">Vincula un archivo .txt y se actualizará solo cada vez que un alumno entregue (Chrome o Edge en ordenador).</p>
+ <button class="b" id="fv">Elegir o crear resultados_examen.txt</button><button class="b g" id="fu">🔄 Actualizar archivo ahora</button><button class="b g" id="fd">⬇ Descargar resultados.txt</button><div class="s" id="fs"></div></div>
  <div class="c"><h2>Importar resultados de alumnos</h2><p class="s">Pega los códigos (uno por línea) o carga los archivos .json de los alumnos.</p>
  <textarea id="imp" class="ta" rows="3" placeholder="Pega aquí los códigos"></textarea><button class="b" id="ib">Importar códigos</button>
  <input type="file" id="fi" accept=".json,application/json" multiple><div class="s" id="im"></div></div>
  <div class="c"><button class="b g" id="ec">⬇ Exportar a CSV (Excel)</button><button class="b g" id="ej">⬇ Copia de seguridad (JSON)</button><button class="b g" id="bd">🗑 Borrar todos los resultados</button></div>
  <button class="b g" id="bk">← Salir del panel</button>`;
- const rep=(o,d,b)=>{$("im").textContent=`Importados: ${o} · repetidos: ${d} · no válidos: ${b}`;rs()};
+ const rep=(o,d,b)=>{$("im").textContent=`Importados: ${o} · repetidos: ${d} · no válidos: ${b}`;rs();if(o)syncFile(true)};
  function rs(){
   const rows=load().sort((a,b)=>b.fecha.localeCompare(a.fecha));
   if(!rows.length){$("rs").innerHTML='<p class="s">Todavía no hay resultados guardados en este navegador.</p>';return}
@@ -129,6 +148,12 @@ function panel(){
  $("ej").onclick=()=>download("copia_resultados_examen.json",JSON.stringify(load()),"application/json");
  $("bd").onclick=()=>{if(confirm("¿Borrar todos los resultados de este navegador? Esta acción no se puede deshacer.")){store([]);rs()}};
  $("bk").onclick=()=>home();
+ $("fv").onclick=async()=>{
+  if(!window.showSaveFilePicker){$("fs").textContent="Este navegador no permite vincular un archivo. Usa Chrome o Edge en ordenador, o descarga el archivo con el botón de abajo.";return}
+  try{const h=await showSaveFilePicker({suggestedName:"resultados_examen.txt",types:[{description:"Texto",accept:{"text/plain":[".txt"]}}]});await kv("put","fh",h);const r=await syncFile(true);$("fs").textContent=r==="ok"?"✔ Vinculado: "+h.name+". Se actualizará cada vez que un alumno entregue.":"No se pudo escribir en el archivo."}catch(e){$("fs").textContent="Operación cancelada."}
+ };
+ $("fu").onclick=async()=>{const r=await syncFile(true);$("fs").textContent=r==="ok"?"✔ Archivo actualizado.":r==="pending"?"El navegador no concedió permiso de escritura.":"Aún no has vinculado ningún archivo."};
+ $("fd").onclick=()=>download("resultados_examen.txt",txt(),"text/plain");
  rs();
 }
 home();
