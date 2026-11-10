@@ -70,9 +70,31 @@ function add(r){if(!r||typeof r.nombre!=="string"||typeof r.aciertos!=="number"|
 function download(name,txt,type){const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([txt],{type}));a.download=name;document.body.appendChild(a);a.click();a.remove()}
 const idb=()=>new Promise((res,rej)=>{const q=indexedDB.open("montapc",1);q.onupgradeneeded=()=>q.result.createObjectStore("k");q.onsuccess=()=>res(q.result);q.onerror=()=>rej(q.error)});
 async function kv(m,k,v){const d=await idb();return new Promise((res,rej)=>{const t=d.transaction("k",m==="get"?"readonly":"readwrite").objectStore("k"),q=m==="get"?t.get(k):t.put(v,k);q.onsuccess=()=>res(q.result);q.onerror=()=>rej(q.error)})}
-function txt(){
- const rows=load().sort((a,b)=>a.fecha.localeCompare(b.fecha));
- return "RESULTADOS DEL EXAMEN · MONTAJE DE UN PC\nActualizado: "+new Date().toLocaleString("es-ES")+"\n\n"+["ALUMNO | ACIERTOS | NOTA (0-10) | FECHA"].concat(rows.map(x=>`${x.nombre} | ${x.aciertos}/${x.total} | ${x.nota.toFixed(1)} | ${new Date(x.fecha).toLocaleString("es-ES")}`)).join("\n")+"\n";
+const HDR="ALUMNO | ACIERTOS | NOTA (0-10) | FECHA";
+function lines(){return load().sort((a,b)=>a.fecha.localeCompare(b.fecha)).map(x=>`${x.nombre} | ${x.aciertos}/${x.total} | ${x.nota.toFixed(1)} | ${new Date(x.fecha).toLocaleString("es-ES")}`)}
+function build(L){return "RESULTADOS DEL EXAMEN · MONTAJE DE UN PC\nActualizado: "+new Date().toLocaleString("es-ES")+"\n\n"+[HDR].concat(L).join("\n")+"\n"}
+function txt(){return build(lines())}
+const GK="montapc_gh";
+function ghcfg(){try{return JSON.parse(localStorage.getItem(GK)||"null")}catch(e){return null}}
+async function pushGH(){
+ const c=ghcfg();if(!c||!c.token)return "";
+ const u=`https://api.github.com/repos/${c.owner}/${c.repo}/contents/${c.path.split("/").map(encodeURIComponent).join("/")}`;
+ const H={Authorization:"Bearer "+c.token,Accept:"application/vnd.github+json","X-GitHub-Api-Version":"2022-11-28"};
+ for(let k=0;k<3;k++){
+  try{
+   const g=await fetch(u+"?ref="+encodeURIComponent(c.branch),{headers:H});
+   let sha,rem=[];
+   if(g.ok){const j=await g.json();sha=j.sha;rem=decodeURIComponent(escape(atob(j.content.replace(/\s/g,"")))).split("\n").filter(l=>l.includes(" | ")&&l!==HDR)}
+   else if(g.status!==404)return "err";
+   const mine=lines().filter(l=>!rem.includes(l));
+   const body={message:"Actualiza resultados del examen",content:btoa(unescape(encodeURIComponent(build(rem.concat(mine))))),branch:c.branch};
+   if(sha)body.sha=sha;
+   const r=await fetch(u,{method:"PUT",headers:H,body:JSON.stringify(body)});
+   if(r.ok)return "ok";
+   if(r.status!==409&&r.status!==422)return "err";
+  }catch(e){return "err"}
+ }
+ return "err";
 }
 async function syncFile(ask){
  try{
@@ -118,8 +140,13 @@ async function finish(){
 async function save(r){
  r.h=hash(r);const a=load();a.push(r);
  if(!store(a))return "⚠ No se pudo guardar en este navegador: entrega el código de abajo a tu profesor.";
- const f=await syncFile(false);
- return "✔ Resultado guardado"+(f==="ok"?" y archivo resultados.txt actualizado.":f==="pending"?"; el profesor debe pulsar «Actualizar archivo» en su panel.":" en este navegador.");
+ const f=await syncFile(false),g=await pushGH();
+ let m="✔ Resultado guardado";
+ if(f==="ok")m+=" · archivo local actualizado";
+ if(f==="pending")m+=" · el profesor debe pulsar «Actualizar archivo» en su panel";
+ if(g==="ok")m+=" · subido a GitHub";
+ if(g==="err")m+=" · ⚠ no se pudo subir a GitHub (avisa al profesor)";
+ return m+".";
 }
 function login(){
  V.innerHTML=`<div class="c"><h1>🔒 Panel del profesor</h1><input id="pw" type="password" inputmode="numeric" placeholder="Contraseña"><div class="err" id="er"></div><button class="b" id="ok">Entrar</button><button class="b g" id="bk">← Volver</button></div>`;
@@ -128,6 +155,9 @@ function login(){
 }
 function panel(){
  V.innerHTML=`<div class="c"><h1>📋 Resultados</h1><div id="rs"></div></div>
+ <div class="c"><h2>☁ Guardar en GitHub</h2><p class="s">El archivo se actualiza en tu repositorio cada vez que un alumno entrega. Usa un token de GitHub con permiso solo para este repositorio.</p>
+ <input id="go" placeholder="Usuario u organización"><input id="gr" placeholder="Repositorio"><input id="gb" placeholder="Rama (main)"><input id="gp" placeholder="Ruta del archivo (resultados_examen.txt)"><input id="gt" type="password" placeholder="Token (fine-grained, Contents: lectura y escritura)">
+ <button class="b" id="gs">Guardar configuración y subir ahora</button><button class="b g" id="gv2">👁 Ver el archivo publicado</button><button class="b g" id="gx">Quitar el token de este navegador</button><div class="s" id="gm"></div><pre class="ta" id="gv" style="white-space:pre-wrap;display:none"></pre></div>
  <div class="c"><h2>📄 Archivo de texto de notas</h2><p class="s">Vincula un archivo .txt y se actualizará solo cada vez que un alumno entregue (Chrome o Edge en ordenador).</p>
  <button class="b" id="fv">Elegir o crear resultados_examen.txt</button><button class="b g" id="fu">🔄 Actualizar archivo ahora</button><button class="b g" id="fd">⬇ Descargar resultados.txt</button><div class="s" id="fs"></div></div>
  <div class="c"><h2>Importar resultados de alumnos</h2><p class="s">Pega los códigos (uno por línea) o carga los archivos .json de los alumnos.</p>
@@ -135,7 +165,7 @@ function panel(){
  <input type="file" id="fi" accept=".json,application/json" multiple><div class="s" id="im"></div></div>
  <div class="c"><button class="b g" id="ec">⬇ Exportar a CSV (Excel)</button><button class="b g" id="ej">⬇ Copia de seguridad (JSON)</button><button class="b g" id="bd">🗑 Borrar todos los resultados</button></div>
  <button class="b g" id="bk">← Salir del panel</button>`;
- const rep=(o,d,b)=>{$("im").textContent=`Importados: ${o} · repetidos: ${d} · no válidos: ${b}`;rs();if(o)syncFile(true)};
+ const rep=(o,d,b)=>{$("im").textContent=`Importados: ${o} · repetidos: ${d} · no válidos: ${b}`;rs();if(o){syncFile(true);pushGH()}};
  function rs(){
   const rows=load().sort((a,b)=>b.fecha.localeCompare(a.fecha));
   if(!rows.length){$("rs").innerHTML='<p class="s">Todavía no hay resultados guardados en este navegador.</p>';return}
@@ -154,6 +184,20 @@ function panel(){
  };
  $("fu").onclick=async()=>{const r=await syncFile(true);$("fs").textContent=r==="ok"?"✔ Archivo actualizado.":r==="pending"?"El navegador no concedió permiso de escritura.":"Aún no has vinculado ningún archivo."};
  $("fd").onclick=()=>download("resultados_examen.txt",txt(),"text/plain");
+ const loc=location.hostname.endsWith("github.io"),c0=ghcfg()||{};
+ $("go").value=c0.owner||(loc?location.hostname.split(".")[0]:"");$("gr").value=c0.repo||(loc?location.pathname.split("/")[1]||"":"");$("gb").value=c0.branch||"main";$("gp").value=c0.path||"resultados_examen.txt";$("gt").value=c0.token||"";
+ $("gs").onclick=async()=>{
+  const c={owner:$("go").value.trim(),repo:$("gr").value.trim(),branch:$("gb").value.trim()||"main",path:$("gp").value.trim()||"resultados_examen.txt",token:$("gt").value.trim()};
+  if(!c.owner||!c.repo||!c.token){$("gm").textContent="Completa usuario, repositorio y token.";return}
+  try{localStorage.setItem(GK,JSON.stringify(c))}catch(e){}
+  $("gm").textContent="Subiendo…";const r=await pushGH();
+  $("gm").textContent=r==="ok"?"✔ Archivo subido a GitHub ("+c.path+"). Desde ahora se actualizará con cada examen.":"⚠ No se pudo subir. Revisa usuario, repositorio, rama, ruta y que el token tenga permiso de escritura en Contents.";
+ };
+ $("gv2").onclick=async()=>{
+  $("gv").style.display="block";$("gv").textContent="Cargando…";
+  try{const r=await fetch(new URL("resultados_examen.txt",location.href).href+"?t="+Date.now(),{cache:"no-store"});$("gv").textContent=r.ok?await r.text():"No se encontró el archivo junto a esta página (tras subirlo, GitHub Pages tarda 1-2 minutos en publicarlo)."}catch(e){$("gv").textContent="No se pudo cargar el archivo."}
+ };
+ $("gx").onclick=()=>{try{localStorage.removeItem(GK)}catch(e){}$("gt").value="";$("gm").textContent="Configuración y token eliminados de este navegador."};
  rs();
 }
 home();
