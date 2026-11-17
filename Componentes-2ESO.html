@@ -1,0 +1,2054 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="artifact-type" content="tool">
+  <meta name="design-style" content="handbook">
+  <title>Ficha de Actividades — El ordenador: hardware y software</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      color-scheme: light;
+
+      /* Page and surfaces (Handbook) */
+      --background: #ffffff;
+      --surface-container-low: #f3f2f1;
+      --surface-container: #e8e7e5;
+      --surface-container-high: #dbdad9;
+
+      /* Ink */
+      --on-surface: #0b0c0c;
+      --on-surface-variant: #505a5f;
+
+      /* Rules */
+      --outline: #0b0c0c;
+      --outline-variant: #b1b4b6;
+
+      /* Accents */
+      --primary: #162e51;
+      --on-primary: #ffffff;
+      --primary-container: #d2e2f1;
+      --on-primary-container: #0c2d4a;
+      --secondary: #4c2c92;
+      --tertiary: #1a569e;
+      --error: #d4351c;
+      --on-error: #ffffff;
+
+      /* Data series */
+      --data-1: #1a569e;
+      --data-2: #c75a0a;
+      --data-3: #28a197;
+      --data-4: #4c2c92;
+      --data-context: #b1b4b6;
+
+      /* Fonts */
+      --font-headline: 'Public Sans', sans-serif;
+      --font-body: 'Public Sans', sans-serif;
+      --font-label: 'Public Sans', sans-serif;
+
+      /* Shape */
+      --rounded: 0;
+      --rounded-lg: 0;
+      --rounded-full: 0;
+
+      /* Style effects */
+      --top-index-rule: 6px solid var(--primary);
+      --inset-rule: 5px solid var(--tertiary);
+      --inset-rule-positive: 5px solid var(--positive);
+      --inset-rule-warning: 5px solid var(--warning);
+      --button-ground: 0 2px 0 #091526;
+      --button-ground-secondary: 0 2px 0 #858686;
+      --focus-yellow: #ffdd00;
+      --focus-ring: 3px solid var(--focus-yellow);
+      --focus-bar: inset 0 0 0 2px var(--on-surface);
+      --focus-underline: 0 -2px var(--focus-yellow), 0 4px var(--on-surface);
+
+      /* Shared semantic & focus tokens */
+      --positive: #00703c;
+      --warning: #c75a0a;
+      --focus: var(--primary);
+
+      /* Type scale (Focused Tool) */
+      --display-size: clamp(1.75rem, 1.4rem + 1.2vw, 2.25rem);
+      --headline-size: clamp(1.25rem, 1.1rem + 0.5vw, 1.5rem);
+      --subhead-size: clamp(1.0625rem, 1rem + 0.25vw, 1.1875rem);
+      --body-size: clamp(0.9375rem, 0.9rem + 0.15vw, 1rem);
+      --label-size: 0.75rem;
+
+      /* Spacing scale (4pt base) */
+      --space-xs: 0.25rem;
+      --space-sm: 0.5rem;
+      --space-md: 1rem;
+      --space-lg: 1.5rem;
+      --space-xl: 2.5rem;
+      --space-2xl: 4rem;
+      --space-3xl: 6rem;
+
+      /* Motion */
+      --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+      --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+      --dur-micro: 120ms;
+      --dur-short: 220ms;
+      --dur-long: 420ms;
+    }
+
+    /* Base reset */
+    *, *::before, *::after { box-sizing: border-box; }
+    html, body {
+      overflow-x: clip;
+      margin: 0;
+      padding: 0;
+      background: var(--background);
+      color: var(--on-surface);
+      font-family: var(--font-body);
+      font-size: var(--body-size);
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+    }
+    header { position: static !important; }
+
+    button, input, select, textarea {
+      font-family: inherit;
+      font-size: var(--body-size);
+      color: var(--on-surface);
+    }
+
+    .page-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr);
+      gap: var(--space-xl);
+      padding: var(--space-lg);
+      max-width: 1100px;
+      margin: 0 auto;
+      overflow: hidden;
+    }
+    .page-grid * { min-width: 0; }
+
+    /* Handbook Top Index Bar */
+    .index-header {
+      border-top: var(--top-index-rule);
+      border-bottom: 1px solid var(--on-surface);
+      padding: var(--space-sm) 0;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: var(--space-sm);
+      font-family: var(--font-label);
+      font-weight: 700;
+      font-size: var(--label-size);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--on-surface);
+    }
+
+    .status-tag {
+      display: inline-block;
+      background: var(--primary-container);
+      color: var(--on-primary-container);
+      font-family: var(--font-label);
+      font-weight: 700;
+      font-size: var(--label-size);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      padding: var(--space-xs) var(--space-sm);
+      border-radius: var(--rounded-full);
+    }
+
+    .title-block {
+      padding-top: var(--space-md);
+      display: grid;
+      gap: var(--space-sm);
+    }
+
+    h1 {
+      margin: 0;
+      font-family: var(--font-headline);
+      font-weight: 800;
+      font-size: var(--display-size);
+      line-height: 1.1;
+      letter-spacing: -0.01em;
+      color: var(--on-surface);
+    }
+
+    .lede {
+      margin: 0;
+      max-width: 68ch;
+      font-size: var(--subhead-size);
+      color: var(--on-surface);
+      line-height: 1.5;
+    }
+
+    /* Student Metadata Header Fields */
+    .meta-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 2fr) minmax(0, 1fr) minmax(0, 1fr);
+      gap: var(--space-md);
+      padding: var(--space-lg);
+      background: var(--surface-container-low);
+      border-left: var(--inset-rule);
+    }
+
+    /* Progress / Tool Control Strip */
+    .status-strip {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: var(--space-md);
+      align-items: end;
+      padding: var(--space-md) var(--space-lg);
+      background: var(--surface-container-low);
+      border-left: var(--inset-rule);
+    }
+
+    .progress-info {
+      display: grid;
+      gap: var(--space-xs);
+    }
+
+    .progress-top {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: baseline;
+      gap: var(--space-md);
+    }
+
+    .progress-count {
+      font-weight: 800;
+      font-size: var(--subhead-size);
+      font-variant-numeric: tabular-nums;
+      color: var(--on-surface);
+    }
+
+    .save-state {
+      font-size: var(--label-size);
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--positive);
+    }
+
+    .progress-track {
+      width: 100%;
+      height: 10px;
+      background: var(--surface-container-high);
+      border: 1px solid var(--outline-variant);
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      width: 0%;
+      background: var(--primary);
+      transition: width var(--dur-short) var(--ease-out);
+    }
+
+    .toolbar-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-sm);
+      align-items: center;
+    }
+
+    /* Section Headings */
+    .activity-section {
+      display: grid;
+      gap: var(--space-lg);
+      padding-top: var(--space-md);
+      border-top: 2px solid var(--on-surface);
+    }
+
+    .activity-head {
+      display: flex;
+      align-items: flex-start;
+      gap: var(--space-md);
+    }
+
+    .step-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      width: 32px;
+      height: 32px;
+      background: var(--primary);
+      color: var(--on-primary);
+      font-weight: 800;
+      font-size: var(--body-size);
+      font-variant-numeric: tabular-nums;
+      margin-top: var(--space-xs);
+    }
+
+    .activity-title-wrap {
+      display: grid;
+      gap: var(--space-xs);
+    }
+
+    h2 {
+      margin: 0;
+      font-family: var(--font-headline);
+      font-weight: 800;
+      font-size: var(--headline-size);
+      line-height: 1.15;
+      letter-spacing: -0.01em;
+      color: var(--on-surface);
+    }
+
+    .section-desc {
+      margin: 0;
+      max-width: 68ch;
+      color: var(--on-surface-variant);
+      font-size: var(--body-size);
+    }
+
+    .inset {
+      border-left: var(--inset-rule);
+      background: var(--surface-container-low);
+      padding: var(--space-md) var(--space-lg);
+    }
+
+    .inset--warning {
+      border-left: var(--inset-rule-warning);
+    }
+
+    .inset--positive {
+      border-left: var(--inset-rule-positive);
+    }
+
+    .inset p {
+      margin: 0;
+      max-width: 68ch;
+    }
+
+    /* Form Controls */
+    .field-group {
+      display: grid;
+      gap: var(--space-xs);
+      align-content: start;
+    }
+
+    label.field-label {
+      display: block;
+      font-weight: 700;
+      font-size: var(--body-size);
+      color: var(--on-surface);
+    }
+
+    .field-hint {
+      display: block;
+      font-size: 0.875rem;
+      color: var(--on-surface-variant);
+    }
+
+    input[type="text"],
+    input[type="date"],
+    input[type="number"],
+    textarea {
+      width: 100%;
+      min-height: 44px;
+      padding: var(--space-sm) var(--space-md);
+      background: var(--background);
+      border: 2px solid var(--outline);
+      border-radius: var(--rounded);
+      color: var(--on-surface);
+      line-height: 1.4;
+      transition: background-color var(--dur-micro) var(--ease-in-out);
+    }
+
+    textarea {
+      min-height: 92px;
+      resize: vertical;
+    }
+
+    input[type="text"]:focus-visible,
+    input[type="date"]:focus-visible,
+    input[type="number"]:focus-visible,
+    textarea:focus-visible {
+      outline: var(--focus-ring);
+      outline-offset: 0;
+      box-shadow: var(--focus-bar);
+    }
+
+    input.is-filled,
+    textarea.is-filled {
+      border-color: var(--primary);
+    }
+
+    /* Buttons (Handbook) */
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--space-sm);
+      min-height: 44px;
+      font: 700 1rem/1.2 var(--font-label);
+      background: var(--primary);
+      color: var(--on-primary);
+      border: 0;
+      border-radius: var(--rounded);
+      padding: var(--space-sm) var(--space-lg);
+      box-shadow: var(--button-ground);
+      cursor: pointer;
+      text-decoration: none;
+      transition: background-color var(--dur-micro) var(--ease-in-out), transform var(--dur-micro) var(--ease-out);
+    }
+
+    .button:hover {
+      background: var(--tertiary);
+    }
+
+    .button--secondary {
+      background: var(--surface-container-low);
+      color: var(--on-surface);
+      border: 1px solid var(--outline-variant);
+      box-shadow: var(--button-ground-secondary);
+    }
+
+    .button--secondary:hover {
+      background: var(--surface-container);
+    }
+
+    .button--danger-armed {
+      background: var(--error);
+      color: var(--on-error);
+      border-color: var(--error);
+      box-shadow: none;
+    }
+
+    .button:active {
+      transform: translateY(2px);
+      box-shadow: none;
+    }
+
+    .button:focus-visible {
+      outline: var(--focus-ring);
+      outline-offset: 0;
+      box-shadow: var(--focus-bar);
+    }
+
+    /* Activity 1: 15 Hardware Cards Grid */
+    .hw-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(min(270px, 100%), 1fr));
+      gap: var(--space-lg);
+    }
+
+    .hw-card {
+      container-type: inline-size;
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+      gap: var(--space-md);
+      padding: var(--space-md);
+      background: var(--background);
+      border: 1px solid var(--outline-variant);
+      border-top: 4px solid var(--primary);
+      break-inside: avoid;
+      page-break-inside: avoid;
+    }
+
+    .hw-card-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--outline-variant);
+      padding-bottom: var(--space-xs);
+    }
+
+    .hw-num {
+      font-weight: 800;
+      font-size: var(--subhead-size);
+      font-variant-numeric: tabular-nums;
+      color: var(--primary);
+    }
+
+    .hw-state-badge {
+      font-size: var(--label-size);
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--on-surface-variant);
+    }
+
+    .hw-state-badge--done {
+      color: var(--positive);
+    }
+
+    .hw-figure {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: var(--space-sm);
+      background: var(--surface-container-low);
+      border: 1px solid var(--outline-variant);
+      min-height: 156px;
+    }
+
+    .hw-figure svg {
+      width: 100%;
+      max-width: 220px;
+      height: 140px;
+      display: block;
+    }
+
+    /* Activity 2: Definitions */
+    .def-list {
+      display: grid;
+      gap: var(--space-lg);
+    }
+
+    .def-card {
+      display: grid;
+      gap: var(--space-md);
+      padding: var(--space-lg);
+      background: var(--surface-container-low);
+      border-left: var(--inset-rule);
+      break-inside: avoid;
+      page-break-inside: avoid;
+    }
+
+    .def-sentence {
+      margin: 0;
+      font-size: var(--subhead-size);
+      line-height: 1.65;
+      color: var(--on-surface);
+      max-width: 72ch;
+    }
+
+    .def-num {
+      font-weight: 800;
+      color: var(--primary);
+      margin-right: var(--space-xs);
+      font-variant-numeric: tabular-nums;
+    }
+
+    .blank-preview {
+      display: inline-block;
+      min-width: 10ch;
+      padding: 0 var(--space-xs);
+      border-bottom: 2px solid var(--on-surface);
+      font-weight: 700;
+      color: var(--tertiary);
+      text-align: center;
+    }
+
+    .blank-preview--empty {
+      color: var(--on-surface-variant);
+      font-weight: 400;
+    }
+
+    .def-inputs {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(min(220px, 100%), 1fr));
+      gap: var(--space-md);
+    }
+
+    /* Activity 3 & 4: Questions */
+    .qa-subsection {
+      display: grid;
+      gap: var(--space-md);
+    }
+
+    .subsection-heading {
+      margin: 0;
+      font-family: var(--font-headline);
+      font-weight: 700;
+      font-size: var(--subhead-size);
+      color: var(--primary);
+      border-bottom: 1px solid var(--outline-variant);
+      padding-bottom: var(--space-xs);
+    }
+
+    .calc-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(min(280px, 100%), 1fr));
+      gap: var(--space-md);
+    }
+
+    .qa-list {
+      display: grid;
+      gap: var(--space-lg);
+    }
+
+    .qa-item {
+      display: grid;
+      gap: var(--space-sm);
+      padding: var(--space-md) 0;
+      border-bottom: 1px solid var(--outline-variant);
+      break-inside: avoid;
+      page-break-inside: avoid;
+    }
+
+    .qa-item:last-child {
+      border-bottom: 0;
+    }
+
+    /* Mirror container for clean multi-line PDF printing */
+    .print-only-answer {
+      display: none;
+    }
+
+    /* Export & Delivery Footer Section */
+    .delivery-panel {
+      display: grid;
+      gap: var(--space-lg);
+      padding: var(--space-lg);
+      background: var(--surface-container-low);
+      border-top: var(--top-index-rule);
+      border-bottom: 1px solid var(--outline-variant);
+    }
+
+    .summary-list {
+      display: grid;
+      gap: 0;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .summary-row {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      gap: var(--space-sm);
+      padding: var(--space-sm) 0;
+      border-bottom: 1px solid var(--outline-variant);
+    }
+
+    .summary-row:last-child {
+      border-bottom: 0;
+    }
+
+    .summary-key {
+      font-weight: 700;
+      color: var(--on-surface);
+    }
+
+    .summary-val {
+      font-variant-numeric: tabular-nums;
+      color: var(--on-surface);
+    }
+
+    .action-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-md);
+      align-items: center;
+    }
+
+    .feedback-box {
+      display: none;
+    }
+
+    .feedback-box.is-visible {
+      display: block;
+    }
+
+    .source-note {
+      margin: 0;
+      padding-top: var(--space-md);
+      border-top: 1px solid var(--outline-variant);
+      font-size: 0.875rem;
+      color: var(--on-surface-variant);
+    }
+
+    /* Mobile breakpoint */
+    @media (max-width: 640px) {
+      .page-grid {
+        padding: var(--space-md);
+        gap: var(--space-lg);
+      }
+      .meta-grid {
+        grid-template-columns: 1fr;
+        padding: var(--space-md);
+      }
+      .status-strip {
+        grid-template-columns: 1fr;
+        padding: var(--space-md);
+      }
+      .action-row {
+        flex-direction: column;
+        align-items: stretch;
+      }
+    }
+
+    /* Reduced motion */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+      }
+    }
+
+    /* Print / Export to PDF stylesheet */
+    @media print {
+      @page {
+        size: A4 portrait;
+        margin: 14mm 14mm 16mm 14mm;
+      }
+
+      html, body {
+        background: var(--background);
+        color: var(--on-surface);
+        font-size: 10.5pt;
+        line-height: 1.4;
+      }
+
+      .page-grid {
+        max-width: none;
+        padding: 0;
+        gap: var(--space-lg);
+      }
+
+      .no-print {
+        display: none !important;
+      }
+
+      .meta-grid {
+        grid-template-columns: 2fr 1fr 1fr;
+        padding: var(--space-sm) var(--space-md);
+        background: var(--background);
+        border: 1px solid var(--outline);
+        border-left: 4px solid var(--primary);
+      }
+
+      .hw-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: var(--space-sm);
+      }
+
+      .hw-card {
+        padding: var(--space-sm);
+        gap: var(--space-xs);
+        border: 1px solid var(--outline-variant);
+        border-top: 3px solid var(--primary);
+      }
+
+      .hw-figure {
+        min-height: 100px;
+        padding: var(--space-xs);
+        background: var(--background);
+      }
+
+      .hw-figure svg {
+        height: 92px;
+      }
+
+      input[type="text"],
+      input[type="date"],
+      input[type="number"] {
+        min-height: 28px;
+        padding: var(--space-xs) var(--space-sm);
+        border: 1px solid var(--outline);
+        background: var(--background);
+        font-size: 10pt;
+      }
+
+      textarea {
+        display: none !important;
+      }
+
+      .print-only-answer {
+        display: block;
+        min-height: 44px;
+        padding: var(--space-xs) var(--space-sm);
+        border: 1px solid var(--outline);
+        background: var(--background);
+        white-space: pre-wrap;
+        word-break: break-word;
+        font-size: 10pt;
+      }
+
+      .print-only-answer--empty {
+        color: var(--on-surface-variant);
+        font-style: italic;
+      }
+
+      .def-card {
+        padding: var(--space-sm) var(--space-md);
+        background: var(--background);
+        border: 1px solid var(--outline-variant);
+        border-left: 4px solid var(--tertiary);
+      }
+
+      .activity-section {
+        gap: var(--space-md);
+        padding-top: var(--space-sm);
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="page-grid">
+    <!-- Top Index Header -->
+    <header>
+      <div class="index-header">
+        <span>Ficha de Actividades · Tecnología e Informática</span>
+        <span class="status-tag">Ordenador: Hardware y Software</span>
+      </div>
+
+      <div class="title-block">
+        <h1>El ordenador: hardware y software</h1>
+        <p class="lede">
+          Completa los datos de cabecera y responde directamente en pantalla a todas las actividades.
+          Cuando termines, utiliza el botón final para guardar o imprimir la ficha completa en PDF y enviarla al profesor.
+        </p>
+      </div>
+    </header>
+
+    <!-- Student Header Fields -->
+    <section aria-label="Datos del alumno o alumna">
+      <div class="meta-grid">
+        <div class="field-group">
+          <label class="field-label" for="student-name">Nombre del alumno/a</label>
+          <input type="text" id="student-name" data-field="studentName" autocomplete="off">
+        </div>
+        <div class="field-group">
+          <label class="field-label" for="student-group">Grupo</label>
+          <input type="text" id="student-group" data-field="studentGroup" autocomplete="off">
+        </div>
+        <div class="field-group">
+          <label class="field-label" for="student-date">Fecha</label>
+          <input type="date" id="student-date" data-field="studentDate">
+        </div>
+      </div>
+    </section>
+
+    <!-- Live Progress & Quick Controls -->
+    <section class="status-strip no-print" aria-label="Progreso de la ficha">
+      <div class="progress-info">
+        <div class="progress-top">
+          <span class="progress-count" id="progress-text">0 de 38 respuestas completadas</span>
+          <span class="save-state" id="save-status">Guardado automático preparado</span>
+        </div>
+        <div class="progress-track" role="progressbar" aria-valuemin="0" aria-valuemax="38" aria-valuenow="0" id="progress-bar-wrap">
+          <div class="progress-fill" id="progress-fill"></div>
+        </div>
+      </div>
+      <div class="toolbar-actions">
+        <button type="button" class="button button--secondary" id="btn-reset-top" onclick="resetWorksheet(this)">
+          Limpiar respuestas
+        </button>
+      </div>
+    </section>
+
+    <!-- ACTIVIDAD 1 -->
+    <section class="activity-section" id="actividad-1" aria-labelledby="heading-act-1">
+      <div class="activity-head">
+        <span class="step-badge" aria-hidden="true">1</span>
+        <div class="activity-title-wrap">
+          <h2 id="heading-act-1">Identificación de elementos de hardware</h2>
+          <p class="section-desc">
+            Identifica los 15 componentes internos, periféricos y conectores mostrados en los esquemas.
+          </p>
+        </div>
+      </div>
+
+      <div class="inset">
+        <p>
+          <strong>Instrucciones:</strong> Observa atentamente cada ilustración técnica y escribe debajo su nombre exacto.
+          Debes recordar los términos estudiados sin utilizar listas ni bancos de palabras de ayuda.
+        </p>
+      </div>
+
+      <div class="hw-grid" id="hw-grid">
+        <!-- 1. Placa base -->
+        <article class="hw-card">
+          <div class="hw-card-top">
+            <span class="hw-num">Elemento 01</span>
+            <span class="hw-state-badge" id="hw-badge-1">Pendiente</span>
+          </div>
+          <div class="hw-figure" aria-hidden="true">
+            <svg viewBox="0 0 220 150" xmlns="http://www.w3.org/2000/svg">
+              <rect x="20" y="12" width="180" height="126" fill="var(--surface-container-low)" stroke="var(--on-surface)" stroke-width="2"/>
+              <circle cx="28" cy="20" r="2.5" fill="var(--background)" stroke="var(--on-surface)" stroke-width="1.2"/>
+              <circle cx="192" cy="20" r="2.5" fill="var(--background)" stroke="var(--on-surface)" stroke-width="1.2"/>
+              <circle cx="28" cy="130" r="2.5" fill="var(--background)" stroke="var(--on-surface)" stroke-width="1.2"/>
+              <circle cx="192" cy="130" r="2.5" fill="var(--background)" stroke="var(--on-surface)" stroke-width="1.2"/>
+              <!-- Rear I/O block -->
+              <rect x="22" y="28" width="20" height="52" fill="var(--surface-container-high)" stroke="var(--on-surface)" stroke-width="1.5"/>
+              <rect x="25" y="34" width="14" height="8" fill="var(--background)" stroke="var(--on-surface)" stroke-width="1"/>
+              <rect x="25" y="48" width="14" height="10" fill="var(--background)" stroke="var(--on-surface)" stroke-width="1"/>
+              <rect x="25" y="64" width="14" height="10" fill="var(--background)" stroke="var(--on-surface)" stroke-width="1"/>
+              <!-- CPU Socket -->
+              <rect x="64" y="26" width="52" height="52" fill="var(--background)" stroke="var(--on-surface)" stroke-width="1.8"/>
+              <rect x="72" y="34" width="36" height="36" fill="var(--surface-container)" stroke="var(--on-surface)" stroke-width="1.2"/>
+              <line x1="120" y1="26" x2="120" y2="76" stroke="var(--on-surface)" stroke-width="1.5"/>
+              <!-- 4 RAM Slots -->
+              <rect x="136" y="22" width="5" height="62" fill="var(--primary)" stroke="var(--on-surface)" stroke-width="1"/>
+              <rect x="145" y="22" width="5" height="62" fill="var(--surface-container-high)" stroke="var(--on-surface)" stroke-width="1"/>
+              <rect x="154" y="22" width="5" height="62" fill="var(--primary)" stroke="var(--on-surface)" stroke-width="1"/>
+              <rect x="163" y="22" width="5" height="62" fill="var(--surface-container-high)" stroke="var(--on-surface)" stroke-width="1"/>
+              <!-- ATX 24-pin power -->
+              <rect x="178" y="30" width="10" height="44" fill="var(--background)" stroke="var(--on-surface)" stroke-width="1.4"/>
+              <!-- PCIe slots -->
+              <rect x="38" y="96" width="76" height="7" fill="var(--primary)" stroke="var(--on-surface)" stroke-width="1.2"/>
+              <rect x="38" y="110" width="38" height="6" fill="var(--surface-container-high)" stroke="var(--on-surface)" stroke-width="1.2"/>
+              <rect x="38" y="122" width="76" height="6" fill="var(--surface-container-high)" stroke="var(--on-surface)" stroke-width="1.2"/>
+              <!-- CMOS battery & Chipset heatsink -->
+              <circle cx="136" cy="108" r="10" fill="var(--background)" stroke="var(--on-surface)" stroke-width="1.5"/>
+              <circle cx="136" cy="108" r="5" fill="var(--surface-container-high)" stroke="var(--on-surface)" stroke-width="1"/>
+              <rect x="156" y="96" width="26" height="26" fill="var(--surface-container-high)" stroke="var(--on-surface)" stroke-width="1.5"/>
+              <line x1="162" y1="96" x2="162" y2="122" stroke="var(--on-surface)" stroke-width="1"/>
+              <line x1="169" y1="96" x2="169" y2="122" stroke="var(--on-surface)" stroke-width="1"/>
+              <line x1="176" y1="96" x2="176" y2="122" stroke="var(--on-surface)" stroke-width="1"/>
+              <!-- Traces -->
+              <path d="M116 45 H136 M116 55 H136 M90 78 V96" stroke="var(--outline-variant)" stroke-width="1.2" fill="none"/>
+            </svg>
+          </div>
+          <div class="field-group">
+            <label class="field-label" for="hw-1">Nombre del elemento 1</label>
+            <input type="text" id="hw-1" data-field="hw1" data-hw="1" autocomplete="off">
+          </div>
+        </article>
+
+        <!-- 2. Microprocesador / CPU -->
+        <article class="hw-card">
+          <div class="hw-card-top">
+            <span class="hw-num">Elemento 02</span>
+            <span class="hw-state-badge" id="hw-badge-2">Pendiente</span>
+          </div>
+          <div class="hw-figure" aria-hidden="true">
+            <svg viewBox="0 0 220 150" xmlns="http://www.w3.org/2000/svg">
+              <!-- Top view: chip with IHS -->
+              <rect x="26" y="28" width="76" height="76" fill="var(--primary)" stroke="var(--on-surface)" stroke-width="2"/>
+              <path d="M36 36 H92 V92 H36 Z" fill="var(--surface-container-high)" stroke="var(--on-surface)" stroke-width="1.5"/>
+              <rect x="44" y="44" width="40" height="40" fill="var(--surface-container-low)" stroke="var(--on-surface)" stroke-width="1.2"/>
+              <polygon points="29,93 29,101 37,101" fill="var(--data-2)"/>
+              <!-- Bottom view: pin/pad grid -->
+              <rect x="118" y="28" width="76" height="76" fill="var(--surface-container-low)" stroke="var(--on-surface)" stroke-width="2"/>
+              <rect x="124" y="34" width="64" height="64" fill="var(--data-2)" opacity="0.25" stroke="var(--on-surface)" stroke-width="1"/>
+              <g stroke="var(--on-surface)" stroke-width="1.2">
+                <line x1="132" y1="36" x2="132" y2="96"/>
+                <line x1="140" y1="36" x2="140" y2="96"/>
+                <line x1="148" y1="36" x2="148" y2="96"/>
+                <line x1="156" y1="36" x2="156" y2="96"/>
+                <line x1="164" y1="36" x2="164" y2="96"/>
+                <line x1="172" y1="36" x2="172" y2="96"/>
+                <line x1="180" y1="36" x2="180" y2="96"/>
+                <line x1="126" y1="42" x2="186" y2="42"/>
+                <line x1="126" y1="50" x2="186" y2="50"/>
+                <line x1="126" y1="58" x2="186" y2="58"/>
+                <line x1="126" y1="66" x2="186" y2="66"/>
+                <line x1="126" y1="74" x2="186" y2="74"/>
+                <line x1="126" y1="82" x2="186" y2="82"/>
+                <line x1="126" y1="90" x2="186" y2="90"/>
+              </g>
+              <rect x="148" y="58" width="16" height="16" fill="var(--surface-container-low)" stroke="var(--on-surface)" stroke-width="1.2"/>
+              <!-- Side thickness hint -->
+              <line x1="26" y1="118" x2="102" y2="118" stroke="var(--on-surface)" stroke-width="2"/>
+              <rect x="34" y="114" width="60" height="4" fill="var(--surface-container-high)" stroke="var(--on-surface)" stroke-width="1"/>
+            </svg>
+          </div>
+          <div class="field-group">
+            <label class="field-label" for="hw-2">Nombre del elemento 2</label>
+            <input type="text" id="hw-2" data-field="hw2" data-hw="2" autocomplete="off">
+          </div>
+        </article>
+
+        <!-- 3. Disipador y ventilador -->
+        <article class="hw-card">
+          <div class="hw-card-top">
+            <span class="hw-num">Elemento 03</span>
+            <span class="hw-state-badge" id="hw-badge-3">Pendiente</span>
+          </div>
+          <div class="hw-figure" aria-hidden="true">
+            <svg viewBox="0 0 220 150" xmlns="http://www.w3.org/2000/svg">
+              <!-- Base contact plate & heatpipes -->
+              <rect x="52" y="114" width="116" height="12" fill="var(--surface-container-high)" stroke="var(--on-surface)" stroke-width="1.8"/>
+              <path d="M74 114 V30 M146 114 V30" stroke="var(--data-2)" stroke-width="4" fill="none"/>
+              <!-- Fin stack -->
+              <rect x="46" y="22" width="128" height="92" fill="var(--surface-container-low)" stroke="var(--on-surface)" stroke-width="1.8"/>
+              <g stroke="var(--on-surface)" stroke-width="1.2">
+                <line x1="56" y1="22" x2="56" y2="114"/>
+                <line x1="66" y1="22" x2="66" y2="114"/>
+                <line x1="154" y1="22" x2="154" y2="114"/>
+                <line x1="164" y1="22" x2="164" y2="114"/>
+              </g>
+              <!-- Axial fan shroud & blades -->
+              <rect x="68" y="26" width="84" height="84" fill="var(--background)" stroke="var(--on-surface)" stroke-width="2"/>
+              <circle cx="110" cy="68" r="36" fill="var(--surface-container-high)" stroke="var(--on-surface)" stroke-width="1.8"/>
+              <g fill="var(--primary)" stroke="var(--on-surface)" stroke-width="1.2">
+                <path d="M110 68 C100 50, 118 35, 126 42 C132 48, 122 60, 110 68 Z"/>
+                <path d="M110 68 C128 58, 143 76, 136 84 C130 90, 118 80, 110 68 Z"/>
+                <path d="M110 68 C120 86, 102 101, 94 94 C88 88, 98 76, 110 68 Z"/>
+                <path d="M110 68 C92 78, 77 60, 84 52 C90 46, 102 56, 110 68 Z"/>
+              </g>
+              <circle cx="110" cy="68" r="10" fill="var(--background)" stroke="var(--on-surface)" stroke-width="1.8"/>
+              <!-- 4-pin power cable -->
+              <path d="M152 96 C176 96, 184 114, 188 128" stroke="var(--on-surface)" stroke-width="2" fill="none"/>
+              <rect x="182" y="126" width="12" height="8" fill="var(--background)" stroke="var(--on-surface)" stroke-width="1.5"/>
+            </svg>
+          </div>
+          <div class="field-group">
+            <label class="field-label" for="hw-3">Nombre del elemento 3</label>
+            <input type="text" id="hw-3" data-field="hw3" data-hw="3" autocomplete="off">
+          </div>
+        </article>
+
+        <!-- 4. Memoria RAM -->
+        <article class="hw-card">
+          <div class="hw-card-top">
+            <span class="hw-num">Elemento 04</span>
+            <span class="hw-state-badge" id="hw-badge-4">Pendiente</span>
+          </div>
+          <div class="hw-figure" aria-hidden="true">
+            <svg viewBox="0 0 220 150" xmlns="http://www.w3.org/2000/svg">
+              <!-- PCB module -->
+              <path d="M16 48 H204 V62 A4 4 0 0 0 204 70 V94 H134 V88 H126 V94 H16 V70 A4 4 0 0 0 16 62 Z" fill="var(--primary)" stroke="var(--on-surface)" stroke-width="2"/>
+              <!-- 8 DRAM ICs -->
+              <rect x="26" y="54" width="16" height="26" fill="var(--on-surface)"/>
+              <rect x="47" y="54" width="16" height="26" fill="var(--on-surface)"/>
+              <rect x="68" y="54" width="16" height="26" fill="var(--on-surface)"/>
+              <rect x="89" y="54" width="16" height="26" fill="var(--on-surface)"/>
+              <rect x="115" y="54" width="16" height="26" fill="var(--on-surface)"/>
+              <rect x="136" y="54" width="16" height="26" fill="var(--on-surface)"/>
+              <rect x="157" y="54" width="16" height="26" fill="var(--on-surface)"/>
+              <rect x="178" y="54" width="16" height="26" fill="var(--on-surface)"/>
+              <!-- Gold edge contacts -->
+              <rect x="20" y="88" width="104" height="6" fill="var(--data-2)"/>
+              <rect x="136" y="88" width="64" height="6" fill="var(--data-2)"/>
+              <g stroke="var(--on-surface)" stroke-width="1">
+                <line x1="28" y1="88" x2="28" y2="94"/>
+                <line x1="36" y1="88" x2="36" y2="94"/>
+                <line x1="44" y1="88" x2="44" y2="94"/>
+                <line x1="52" y1="88" x2="52" y2="94"/>
+                <line x1="60" y1="88" x2="60" y2="94"/>
+                <line x1="68" y1="88" x2="68" y2="94"/>
+                <line x1="76" y1="88" x2="76" y2="94"/>
+                <line x1="84" y1="88" x2="84" y2="94"/>
+                <line x1="92" y1="88" x2="92" y2="94"/>
+                <line x1="100" y1="88" x2="100" y2="94"/>
+                <line x1="108" y1="88" x2="108" y2="94"/>
+                <line x1="116" y1="88" x2="116" y2="94"/>
+                <line x1="144" y1="88" x2="144" y2="94"/>
+                <line x1="152" y1="88" x2="152" y2="94"/>
+                <line x1="160" y1="88" x2="160" y2="94"/>
+                <line x1="168" y1="88" x2="168" y2="94"/>
+                <line x1="176" y1="88" x2="176" y2="94"/>
+                <line x1="184" y1="88" x2="184" y2="94"/>
+                <line x1="192" y1="88" x2="192" y2="94"/>
+              </g>
+            </svg>
+          </div>
+          <div class="field-group">
+            <label class="field-label" for="hw-4">Nombre del elemento 4</label>
+            <input type="text" id="hw-4" data-field="hw4" data-hw="4" autocomplete="off">
+          </div>
+        </article>
+
+        <!-- 5. Disco duro -->
+        <article class="hw-card">
+          <div class="hw-card-top">
+            <span class="hw-num">Elemento 05</span>
+            <span class="hw-state-badge" id="hw-badge-5">Pendiente</span>
+          </div>
+          <div class="hw-figure" aria-hidden="true">
+            <svg viewBox="0 0 220 150" xmlns="http://www.w3.org/2000/svg">
+              <!-- Drive chassis -->
+              <rect x="52" y="12" width="116" height="126" fill="var(--surface-container-high)" stroke="var(--on-surface)" stroke-width="2"/>
+              <rect x="58" y="18" width="104" height="114" fill="var(--surface-container-low)" stroke="var(--on-surface)" stroke-width="1.2"/>
+              <!-- Magnetic platter -->
+              <circle cx="110" cy="60" r="38" fill="var(--background)" stroke="var(--on-surface)" stroke-width="1.8"/>
+              <circle cx="110" cy="60" r="24" fill="none" stroke="var(--outline-variant)" stroke-width="1"/>
+              <circle cx="110" cy="60" r="11" fill="var(--surface-container-high)" stroke="var(--on-surface)" stroke-width="1.5"/>
+              <circle cx="110" cy="60" r="4" fill="var(--on-surface)"/>
+              <!-- Actuator arm -->
+              <circle cx="72" cy="112" r="10" fill="var(--surface-container-high)" stroke="var(--on-surface)" stroke-width="1.5"/>
+              <polygon points="69,104 77,110 100,72 96,69" fill="var(--primary)" stroke="var(--on-surface)" stroke-width="1.2"/>
+              <circle cx="72" cy="112" r="3" fill="var(--on-surface)"/>
+              <!-- Corner mounting screws -->
+              <circle cx="62" cy="22" r="2" fill="var(--on-surface)"/>
+              <circle cx="158" cy="22" r="2" fill="var(--on-surface)"/>
+              <circle cx="62" cy="128" r="2" fill="var(--on-surface)"/>
+              <circle cx="158" cy="128" r="2" fill="var(--on-surface)"/>
+            </svg>
+          </div>
+          <div class="field-group">
+            <label class="field-label" for="hw-5">Nombre del elemento 5</label>
+            <input type="text" id="hw-5" data-field="hw5" data-hw="5" autocomplete="off">
+          </div>
+        </article>
+
+        <!-- 6. Fuente de alimentación -->
+        <article class="hw-card">
+          <div class="hw-card-top">
+            <span class="hw-num">Elemento 06</span>
+            <span class="hw-state-badge" id="hw-badge-6">Pendiente</span>
+          </div>
+          <div class="hw-figure" aria-hidden="true">
+            <svg viewBox="0 0 220 150" xmlns="http://www.w3.org/2000/svg">
+              <!-- Box 3D -->
+              <polygon points="36,42 132,42 158,24 62,24" fill="var(--surface-container)" stroke="var(--on-surface)" stroke-width="1.8"/>
+              <rect x="36" y="42" width="96" height="76" fill="var(--surface-container-low)" stroke="var(--on-surface)" stroke-width="2"/>
+              <polygon points="132,42 158,24 158,100 132,118" fill="var(--surface-container-high)" stroke="var(--on-surface)" stroke-width="1.8"/>
+              <!-- Front fan grille -->
+              <circle cx="84" cy="80" r="28" fill="var(--background)" stroke="var(--on-surface)" stroke-width="1.5"/>
+              <circle cx="84" cy="80" r="19" fill="none" stroke="var(--on-surface)" stroke-width="1.2"/>
+              <circle cx="84" cy="80" r="10" fill="var(--surface-container-high)" stroke="var(--on-surface)" stroke-width="1.2"/>
+              <line x1="56" y1="80" x2="112" y2="80" stroke="var(--on-surface)" stroke-width="1.2"/>
+              <line x1="84" y1="52" x2="84" y2="108" stroke="var(--on-surface)" stroke-width="1.2"/>
+              <!-- Rear IEC socket & switch -->
+              <rect x="139" y="54" width="12" height="16" fill="var(--on-surface)"/>
+              <rect x="142" y="58" width="2" height="6" fill="var(--background)"/>
+              <rect x="146" y="58" width="2" height="6" fill="var(--background)"/>
+              <rect x="141" y="78" width="8" height="12" fill="var(--error)" stroke="var(--on-surface)" stroke-width="1"/>
+              <!-- Cable bundle -->
+              <path d="M158 84 C178 84, 184 92, 188 112" stroke="var(--primary)" stroke-width="3" fill="none"/>
+              <path d="M158 88 C176 90, 180 100, 182 118" stroke="var(--data-2)" stroke-width="3" fill="none"/>
+              <path d="M158 92 C170 96, 174 108, 175 122" stroke="var(--on-surface)" stroke-width="3" fill="none"/>
+              <rect x="172" y="114" width="20" height="12" fill="var(--background)" stroke="var(--on-surface)" stroke-width="1.5"/>
+            </svg>
+          </div>
+          <div class="field-group">
+            <label class="field-label" for="hw-6">Nombre del elemento 6</label>
+            <input type="text" id="hw-6" data-field="hw6" data-hw="6" autocomplete="off">
+          </div>
+        </article>
+
+        <!-- 7. Carcasa -->
+        <article class="hw-card">
+          <div class="hw-card-top">
+            <span class="hw-num">Elemento 07</span>
+            <span class="hw-state-badge" id="hw-badge-7">Pendiente</span>
+          </div>
+          <div class="hw-figure" aria-hidden="true">
+            <svg viewBox="0 0 220 150" xmlns="http://www.w3.org/2000/svg">
+              <!-- Tower chassis 3D -->
+              <polygon points="74,20 124,20 150,32 100,32" fill="var(--surface-container-high)" stroke="var(--on-surface)" stroke-width="1.8"/>
+              <rect x="100" y="32" width="50" height="100" fill="var(--surface-container-low)" stroke="var(--on-surface)" stroke-width="2"/>
+              <polygon points="74,20 100,32 100,132 74,120" fill="var(--surface-container)" stroke="var(--on-surface)" stroke-width="1.8"/>
+              <!-- Side panel window / vents -->
+              <rect x="80" y="42" width="14" height="58" fill="var(--background)" stroke="var(--on-surface)" stroke-width="1"/>
+              <!-- Front drive bays & buttons -->
+              <rect x="108" y="40" width="34" height="8" fill="var(--background)" stroke="var(--on-surface)" stroke-width="1.2"/>
+              <rect x="108" y="52" width="34" height="8" fill="var(--background)" stroke="var(--on-surface)" stroke-width="1.2"/>
+              <circle cx="125" cy="74" r="5" fill="var(--primary)" stroke="var(--on-surface)" stroke-width="1.2"/>
+              <rect x="112" y="86" width="26" height="36" fill="var(--surface-container-high)" stroke="var(--on-surface)" stroke-width="1.2"/>
+              <line x1="112" y1="95" x2="138" y2="95" stroke="var(--on-surface)" stroke-width="1"/>
+              <line x1="112" y1="104" x2="138" y2="104" stroke="var(--on-surface)" stroke-width="1"/>
+              <line x1="112" y1="113" x2="138" y2="113" stroke="var(--on-surface)" stroke-width="1"/>
+              <!-- Feet -->
+              <rect x="102" y="132" width="10" height="4" fill="var(--on-surface)"/>
+              <rect x="138" y="132" width="10" height="4" fill="var(--on-surface)"/>
+            </svg>
+          </div>
+          <div class="field-group">
+            <label class="field-label" for="hw-7">Nombre del elemento 7</label>
+            <input type="text" id="hw-7" data-field="hw7" data-hw="7" autocomplete="off">
+          </div>
+        </article>
+
+        <!-- 8. Monitor -->
+        <article class="hw-card">
+          <div class="hw-card-top">
+            <span class="hw-num">Elemento 08</span>
+            <span class="hw-state-badge" id="hw-badge-8">Pendiente</span>
+          </div>
+          <div class="hw-figure" aria-hidden="true">
+            <svg viewBox="0 0 220 150" xmlns="http://www.w3.org/2000/svg">
+              <rect x="30" y="18" width="160" height="90" fill="var(--on-surface)" stroke="var(--on-surface)" stroke-width="2"/>
+              <rect x="38" y="26" width="144" height="72" fill="var(--primary-container)" stroke="var(--on-surface)" stroke-width="1"/>
+              <circle cx="176" cy="103" r="2" fill="var(--positive)"/>
+              <rect x="100" y="108" width="20" height="18" fill="var(--surface-container-high)" stroke="var(--on-surface)" stroke-width="1.8"/>
+              <rect x="74" y="126" width="72" height="8" fill="var(--surface-container)" stroke="var(--on-surface)" stroke-width="1.8"/>
+            </svg>
+          </div>
+          <div class="field-group">
+            <label class="field-label" for="hw-8">Nombre del elemento 8</label>
+            <input type="text" id="hw-8" data-field="hw8" data-hw="8" autocomplete="off">
+          </div>
+        </article>
+
+        <!-- 9. Teclado -->
+        <article class="hw-card">
+          <div class="hw-card-top">
+            <span class="hw-num">Elemento 09</span>
+            <span class="hw-state-badge" id="hw-badge-9">Pendiente</span>
+          </div>
+          <div class="hw-figure" aria-hidden="true">
+            <svg viewBox="0 0 220 150" xmlns="http://www.w3.org/2000/svg">
+              <!-- Cable -->
+              <path d="M110 42 V24 C110 18, 126 18, 134 22" stroke="var(--on-surface)" stroke-width="2" fill="none"/>
+              <!-- Keyboard frame -->
+              <rect x="16" y="42" width="188" height="72" fill="var(--surface-container-high)" stroke="var(--on-surface)" stroke-width="2"/>
+              <!-- Function row -->
+              <g fill="var(--background)" stroke="var(--on-surface)" stroke-width="1">
+                <rect x="22" y="48" width="10" height="7"/>
+                <rect x="36" y="48" width="10" height="7"/>
+                <rect x="50" y="48" width="10" height="7"/>
+                <rect x="64" y="48" width="10" height="7"/>
+                <rect x="82" y="48" width="10" height="7"/>
+                <rect x="96" y="48" width="10" height="7"/>
+                <rect x="110" y="48" width="10" height="7"/>
+                <rect x="124" y="48" width="10" height="7"/>
+                <rect x="142" y="48" width="10" height="7"/>
+                <rect x="156" y="48" width="10" height="7"/>
+                <rect x="170" y="48" width="10" height="7"/>
+                <rect x="184" y="48" width="10" height="7"/>
+              </g>
+              <!-- Main key rows -->
+              <g fill="var(--background)" stroke="var(--on-surface)" stroke-width="1">
+                <rect x="22" y="60" width="12" height="9"/><rect x="36" y="60" width="10" height="9"/><rect x="48" y="60" width="10" height="9"/><rect x="60" y="60" width="10" height="9"/><rect x="72" y="60" width="10" height="9"/><rect x="84" y="60" width="10" height="9"/><rect x="96" y="60" width="10" height="9"/><rect x="108" y="60" width="10" height="9"/><rect x="120" y="60" width="10" height="9"/><rect x="132" y="60" width="18" height="9"/>
+                <rect x="22" y="72" width="16" height="9"/><rect x="40" y="72" width="10" height="9"/><rect x="52" y="72" width="10" height="9"/><rect x="64" y="72" width="10" height="9"/><rect x="76" y="72" width="10" height="9"/><rect x="88" y="72" width="10" height="9"/><rect x="100" y="72" width="10" height="9"/><rect x="112" y="72" width="10" height="9"/><rect x="124" y="72" width="10" height="9"/><rect x="136" y="72" width="14" height="9"/>
+                <rect x="22" y="84" width="20" height="9"/><rect x="44" y="84" width="10" height="9"/><rect x="56" y="84" width="10" height="9"/><rect x="68" y="84" width="10" height="9"/><rect x="80" y="84" width="10" height="9"/><rect x="92" y="84" width="10" height="9"/><rect x="104" y="84" width="10" height="9"/><rect x="116" y="84" width="10" height="9"/><rect x="128" y="84" width="22" height="9"/>
+                <!-- Spacebar row -->
+                <rect x="22" y="96" width="16" height="9"/><rect x="40" y="96" width="14" height="9"/><rect x="56" y="96" width="56" height="9"/><rect x="114" y="96" width="16" height="9"/><rect x="132" y="96" width="18" height="9"/>
+              </g>
+              <!-- Numpad / Arrows -->
+              <g fill="var(--background)" stroke="var(--on-surface)" stroke-width="1">
+                <rect x="160" y="60" width="10" height="9"/><rect x="172" y="60" width="10" height="9"/><rect x="184" y="60" width="12" height="9"/>
+                <rect x="160" y="72" width="10" height="9"/><rect x="172" y="72" width="10" height="9"/><rect x="184" y="72" width="12" height="9"/>
+                <rect x="160" y="84" width="10" height="9"/><rect x="172" y="84" width="10" height="9"/><rect x="184" y="84" width="12" height="9"/>
+                <rect x="160" y="96" width="22" height="9"/><rect x="184" y="96" width="12" height="9"/>
+              </g>
+            </svg>
+          </div>
+          <div class="field-group">
+            <label class="field-label" for="hw-9">Nombre del elemento 9</label>
+            <input type="text" id="hw-9" data-field="hw9" data-hw="9" autocomplete="off">
+          </div>
+        </article>
+
+        <!-- 10. Ratón -->
+        <article class="hw-card">
+          <div class="hw-card-top">
+            <span class="hw-num">Elemento 10</span>
+            <span class="hw-state-badge" id="hw-badge-10">Pendiente</span>
+          </div>
+          <div class="hw-figure" aria-hidden="true">
+            <svg viewBox="0 0 220 150" xmlns="http://www.w3.org/2000/svg">
+              <path d="M110 30 V16 C110 10, 128 10, 134 16" stroke="var(--on-surface)" stroke-width="2" fill="none"/>
+              <path d="M78 62 C78 38, 90 30, 110 30 C130 30, 142 38, 142 62 V104 C142 124, 128 134, 110 134 C92 134, 78 124, 78 104 Z" fill="var(--surface-container-low)" stroke="var(--on-surface)" stroke-width="2"/>
+              <line x1="78" y1="68" x2="142" y2="68" stroke="var(--on-surface)" stroke-width="1.5"/>
+              <line x1="110" y1="30" x2="110" y2="68" stroke="var(--on-surface)" stroke-width="1.5"/>
+              <rect x="106" y="40" width="8" height="18" fill="var(--primary)" stroke="var(--on-surface)" stroke-width="1.2"/>
+            </svg>
+          </div>
+          <div class="field-group">
+            <label class="field-label" for="hw-10">Nombre del elemento 10</label>
+            <input type="text" id="hw-10" data-field="hw10" data-hw="10" autocomplete="off">
+          </div>
+        </article>
+
+        <!-- 11. Impresora -->
+        <article class="hw-card">
+          <div class="hw-card-top">
+            <span class="hw-num">Elemento 11</span>
+            <span class="hw-state-badge" id="hw-badge-11">Pendiente</span>
+          </div>
+          <div class="hw-figure" aria-hidden="true">
+            <svg viewBox="0 0 220 150" xmlns="http://www.w3.org/2000/svg">
+              <!-- Input paper sheet -->
+              <polygon points="72,18 148,18 152,48 68,48" fill="var(--background)" stroke="var(--on-surface)" stroke-width="1.8"/>
+              <!-- Printer body -->
+              <rect x="44" y="48" width="132" height="54" fill="var(--surface-container-high)" stroke="var(--on-surface)" stroke-width="2"/>
+              <rect x="52" y="56" width="90" height="18" fill="var(--surface-container-low)" stroke="var(--on-surface)" stroke-width="1"/>
+              <!-- Control buttons -->
+              <circle cx="156" cy="60" r="3" fill="var(--positive)"/>
+              <circle cx="166" cy="60" r="3" fill="var(--on-surface)"/>
+              <!-- Output slot & printed page -->
+              <rect x="62" y="84" width="96" height="10" fill="var(--on-surface)"/>
+              <polygon points="68,90 152,90 158,132 62,132" fill="var(--background)" stroke="var(--on-surface)" stroke-width="1.8"/>
+              <line x1="76" y1="102" x2="144" y2="102" stroke="var(--outline-variant)" stroke-width="2"/>
+              <line x1="76" y1="112" x2="132" y2="112" stroke="var(--outline-variant)" stroke-width="2"/>
+              <line x1="76" y1="122" x2="140" y2="122" stroke="var(--outline-variant)" stroke-width="2"/>
+            </svg>
+          </div>
+          <div class="field-group">
+            <label class="field-label" for="hw-11">Nombre del elemento 11</label>
+            <input type="text" id="hw-11" data-field="hw11" data-hw="11" autocomplete="off">
+          </div>
+        </article>
+
+        <!-- 12. Escáner -->
+        <article class="hw-card">
+          <div class="hw-card-top">
+            <span class="hw-num">Elemento 12</span>
+            <span class="hw-state-badge" id="hw-badge-12">Pendiente</span>
+          </div>
+          <div class="hw-figure" aria-hidden="true">
+            <svg viewBox="0 0 220 150" xmlns="http://www.w3.org/2000/svg">
+              <!-- Open lid -->
+              <polygon points="48,74 146,24 188,42 90,92" fill="var(--surface-container-high)" stroke="var(--on-surface)" stroke-width="2"/>
+              <!-- Scanner base -->
+              <polygon points="48,74 168,74 192,102 72,102" fill="var(--surface-container-low)" stroke="var(--on-surface)" stroke-width="2"/>
+              <!-- Glass bed -->
+              <polygon points="62,78 158,78 176,97 80,97" fill="var(--primary-container)" stroke="var(--on-surface)" stroke-width="1.2"/>
+              <!-- Optical scan bar -->
+              <line x1="94" y1="78" x2="112" y2="97" stroke="var(--positive)" stroke-width="3.5"/>
+              <!-- Front thickness & buttons -->
+              <rect x="72" y="102" width="120" height="20" fill="var(--surface-container)" stroke="var(--on-surface)" stroke-width="2"/>
+              <polygon points="48,74 72,102 72,122 48,94" fill="var(--surface-container-high)" stroke="var(--on-surface)" stroke-width="1.8"/>
+              <circle cx="174" cy="112" r="3" fill="var(--primary)"/>
+              <circle cx="162" cy="112" r="3" fill="var(--on-surface)"/>
+            </svg>
+          </div>
+          <div class="field-group">
+            <label class="field-label" for="hw-12">Nombre del elemento 12</label>
+            <input type="text" id="hw-12" data-field="hw12" data-hw="12" autocomplete="off">
+          </div>
+        </article>
+
+        <!-- 13. Pendrive / Memoria USB -->
+        <article class="hw-card">
+          <div class="hw-card-top">
+            <span class="hw-num">Elemento 13</span>
+            <span class="hw-state-badge" id="hw-badge-13">Pendiente</span>
+          </div>
+          <div class="hw-figure" aria-hidden="true">
+            <svg viewBox="0 0 220 150" xmlns="http://www.w3.org/2000/svg">
+              <!-- Metallic USB-A connector tip -->
+              <rect x="30" y="58" width="38" height="34" fill="var(--surface-container-high)" stroke="var(--on-surface)" stroke-width="2"/>
+              <rect x="38" y="65" width="9" height="7" fill="var(--on-surface)"/>
+              <rect x="38" y="78" width="9" height="7" fill="var(--on-surface)"/>
+              <!-- Flash drive body -->
+              <rect x="68" y="50" width="110" height="50" fill="var(--primary)" stroke="var(--on-surface)" stroke-width="2"/>
+              <rect x="86" y="64" width="66" height="22" fill="var(--surface-container-low)" stroke="var(--on-surface)" stroke-width="1.2"/>
+              <!-- Keyring loop -->
+              <path d="M178 62 H192 A13 13 0 0 1 192 88 H178" fill="none" stroke="var(--on-surface)" stroke-width="2"/>
+              <circle cx="190" cy="75" r="5" fill="var(--background)" stroke="var(--on-surface)" stroke-width="1.5"/>
+            </svg>
+          </div>
+          <div class="field-group">
+            <label class="field-label" for="hw-13">Nombre del elemento 13</label>
+            <input type="text" id="hw-13" data-field="hw13" data-hw="13" autocomplete="off">
+          </div>
+        </article>
+
+        <!-- 14. Conector VGA -->
+        <article class="hw-card">
+          <div class="hw-card-top">
+            <span class="hw-num">Elemento 14</span>
+            <span class="hw-state-badge" id="hw-badge-14">Pendiente</span>
+          </div>
+          <div class="hw-figure" aria-hidden="true">
+            <svg viewBox="0 0 220 150" xmlns="http://www.w3.org/2000/svg">
+              <!-- Outer mounting flange -->
+              <rect x="28" y="44" width="164" height="62" fill="var(--surface-container-high)" stroke="var(--on-surface)" stroke-width="2"/>
+              <!-- Hex screw standoffs -->
+              <polygon points="44,64 52,69 52,81 44,86 36,81 36,69" fill="var(--background)" stroke="var(--on-surface)" stroke-width="1.5"/>
+              <circle cx="44" cy="75" r="3" fill="var(--on-surface)"/>
+              <polygon points="176,64 184,69 184,81 176,86 168,81 168,69" fill="var(--background)" stroke="var(--on-surface)" stroke-width="1.5"/>
+              <circle cx="176" cy="75" r="3" fill="var(--on-surface)"/>
+              <!-- D-sub trapezoid shield -->
+              <polygon points="62,54 158,54 150,96 70,96" fill="var(--tertiary)" stroke="var(--on-surface)" stroke-width="2"/>
+              <!-- 15 pins in 3 rows of 5 -->
+              <g fill="var(--on-surface)">
+                <circle cx="84" cy="64" r="2.5"/><circle cx="97" cy="64" r="2.5"/><circle cx="110" cy="64" r="2.5"/><circle cx="123" cy="64" r="2.5"/><circle cx="136" cy="64" r="2.5"/>
+                <circle cx="80" cy="75" r="2.5"/><circle cx="93" cy="75" r="2.5"/><circle cx="106" cy="75" r="2.5"/><circle cx="119" cy="75" r="2.5"/><circle cx="132" cy="75" r="2.5"/>
+                <circle cx="84" cy="86" r="2.5"/><circle cx="97" cy="86" r="2.5"/><circle cx="110" cy="86" r="2.5"/><circle cx="123" cy="86" r="2.5"/><circle cx="136" cy="86" r="2.5"/>
+              </g>
+            </svg>
+          </div>
+          <div class="field-group">
+            <label class="field-label" for="hw-14">Nombre del elemento 14</label>
+            <input type="text" id="hw-14" data-field="hw14" data-hw="14" autocomplete="off">
+          </div>
+        </article>
+
+        <!-- 15. Puerto RJ45 -->
+        <article class="hw-card">
+          <div class="hw-card-top">
+            <span class="hw-num">Elemento 15</span>
+            <span class="hw-state-badge" id="hw-badge-15">Pendiente</span>
+          </div>
+          <div class="hw-figure" aria-hidden="true">
+            <svg viewBox="0 0 220 150" xmlns="http://www.w3.org/2000/svg">
+              <!-- Modular socket front view -->
+              <rect x="30" y="34" width="76" height="82" fill="var(--surface-container-high)" stroke="var(--on-surface)" stroke-width="2"/>
+              <path d="M42 48 H58 V40 H78 V48 H94 V102 H42 Z" fill="var(--on-surface)"/>
+              <!-- 8 gold contacts -->
+              <g fill="var(--data-2)">
+                <rect x="46" y="88" width="4" height="14"/>
+                <rect x="52" y="88" width="4" height="14"/>
+                <rect x="58" y="88" width="4" height="14"/>
+                <rect x="64" y="88" width="4" height="14"/>
+                <rect x="70" y="88" width="4" height="14"/>
+                <rect x="76" y="88" width="4" height="14"/>
+                <rect x="82" y="88" width="4" height="14"/>
+                <rect x="88" y="88" width="4" height="14"/>
+              </g>
+              <!-- Plug side/3-4 profile -->
+              <rect x="128" y="46" width="44" height="52" fill="var(--surface-container-low)" stroke="var(--on-surface)" stroke-width="2"/>
+              <polygon points="134,46 150,32 156,36 144,46" fill="var(--background)" stroke="var(--on-surface)" stroke-width="1.5"/>
+              <rect x="172" y="64" width="24" height="16" fill="var(--primary)" stroke="var(--on-surface)" stroke-width="1.5"/>
+              <!-- Twisted wires inside plug -->
+              <line x1="132" y1="64" x2="172" y2="64" stroke="var(--data-2)" stroke-width="2"/>
+              <line x1="132" y1="72" x2="172" y2="72" stroke="var(--data-3)" stroke-width="2"/>
+              <line x1="132" y1="80" x2="172" y2="80" stroke="var(--tertiary)" stroke-width="2"/>
+            </svg>
+          </div>
+          <div class="field-group">
+            <label class="field-label" for="hw-15">Nombre del elemento 15</label>
+            <input type="text" id="hw-15" data-field="hw15" data-hw="15" autocomplete="off">
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- ACTIVIDAD 2 -->
+    <section class="activity-section" id="actividad-2" aria-labelledby="heading-act-2">
+      <div class="activity-head">
+        <span class="step-badge" aria-hidden="true">2</span>
+        <div class="activity-title-wrap">
+          <h2 id="heading-act-2">Completar definiciones</h2>
+          <p class="section-desc">
+            Lee cada enunciado y completa los huecos con los conceptos técnicos adecuados.
+          </p>
+        </div>
+      </div>
+
+      <div class="def-list">
+        <!-- 2.1 -->
+        <article class="def-card">
+          <p class="def-sentence">
+            <span class="def-num">2.1</span>
+            El conjunto de dispositivos físicos que componen un ordenador se denomina
+            <span class="blank-preview blank-preview--empty" id="mirror-def1a">(Hueco 1)</span>,
+            mientras que el conjunto de programas y aplicaciones que se ejecutan en él recibe el nombre de
+            <span class="blank-preview blank-preview--empty" id="mirror-def1b">(Hueco 2)</span>.
+          </p>
+          <div class="def-inputs">
+            <div class="field-group">
+              <label class="field-label" for="def-1a">Hueco 1 (2.1)</label>
+              <input type="text" id="def-1a" data-field="def1a" data-mirror="mirror-def1a" data-placeholder="(Hueco 1)" autocomplete="off">
+            </div>
+            <div class="field-group">
+              <label class="field-label" for="def-1b">Hueco 2 (2.1)</label>
+              <input type="text" id="def-1b" data-field="def1b" data-mirror="mirror-def1b" data-placeholder="(Hueco 2)" autocomplete="off">
+            </div>
+          </div>
+        </article>
+
+        <!-- 2.2 -->
+        <article class="def-card">
+          <p class="def-sentence">
+            <span class="def-num">2.2</span>
+            La unidad más pequeña de información digital en un ordenador es el
+            <span class="blank-preview blank-preview--empty" id="mirror-def2a">(Hueco 1)</span>
+            (que solo puede valer 1 o 0), y la agrupación de 8 de estas unidades forma un
+            <span class="blank-preview blank-preview--empty" id="mirror-def2b">(Hueco 2)</span>.
+          </p>
+          <div class="def-inputs">
+            <div class="field-group">
+              <label class="field-label" for="def-2a">Hueco 1 (2.2)</label>
+              <input type="text" id="def-2a" data-field="def2a" data-mirror="mirror-def2a" data-placeholder="(Hueco 1)" autocomplete="off">
+            </div>
+            <div class="field-group">
+              <label class="field-label" for="def-2b">Hueco 2 (2.2)</label>
+              <input type="text" id="def-2b" data-field="def2b" data-mirror="mirror-def2b" data-placeholder="(Hueco 2)" autocomplete="off">
+            </div>
+          </div>
+        </article>
+
+        <!-- 2.3 -->
+        <article class="def-card">
+          <p class="def-sentence">
+            <span class="def-num">2.3</span>
+            El
+            <span class="blank-preview blank-preview--empty" id="mirror-def3a">(Hueco 1)</span>
+            es el cerebro del ordenador, encargado de procesar todos los datos y controlar los dispositivos; su velocidad de procesamiento se mide en
+            <span class="blank-preview blank-preview--empty" id="mirror-def3b">(Hueco 2)</span>.
+          </p>
+          <div class="def-inputs">
+            <div class="field-group">
+              <label class="field-label" for="def-3a">Hueco 1 (2.3)</label>
+              <input type="text" id="def-3a" data-field="def3a" data-mirror="mirror-def3a" data-placeholder="(Hueco 1)" autocomplete="off">
+            </div>
+            <div class="field-group">
+              <label class="field-label" for="def-3b">Hueco 2 (2.3)</label>
+              <input type="text" id="def-3b" data-field="def3b" data-mirror="mirror-def3b" data-placeholder="(Hueco 2)" autocomplete="off">
+            </div>
+          </div>
+        </article>
+
+        <!-- 2.4 -->
+        <article class="def-card">
+          <p class="def-sentence">
+            <span class="def-num">2.4</span>
+            La memoria
+            <span class="blank-preview blank-preview--empty" id="mirror-def4a">(Hueco 1)</span>
+            almacena datos de forma temporal y es volátil (se borra al apagar el equipo), mientras que el
+            <span class="blank-preview blank-preview--empty" id="mirror-def4b">(Hueco 2)</span>
+            conserva todos los programas y archivos de forma permanente.
+          </p>
+          <div class="def-inputs">
+            <div class="field-group">
+              <label class="field-label" for="def-4a">Hueco 1 (2.4)</label>
+              <input type="text" id="def-4a" data-field="def4a" data-mirror="mirror-def4a" data-placeholder="(Hueco 1)" autocomplete="off">
+            </div>
+            <div class="field-group">
+              <label class="field-label" for="def-4b">Hueco 2 (2.4)</label>
+              <input type="text" id="def-4b" data-field="def4b" data-mirror="mirror-def4b" data-placeholder="(Hueco 2)" autocomplete="off">
+            </div>
+          </div>
+        </article>
+
+        <!-- 2.5 -->
+        <article class="def-card">
+          <p class="def-sentence">
+            <span class="def-num">2.5</span>
+            Para evitar el sobrecalentamiento del procesador, el sistema de
+            <span class="blank-preview blank-preview--empty" id="mirror-def5a">(Hueco 1)</span>
+            combina pasta o resina térmica, un
+            <span class="blank-preview blank-preview--empty" id="mirror-def5b">(Hueco 2)</span>
+            metálico que absorbe el calor y un
+            <span class="blank-preview blank-preview--empty" id="mirror-def5c">(Hueco 3)</span>
+            que renueva el aire.
+          </p>
+          <div class="def-inputs">
+            <div class="field-group">
+              <label class="field-label" for="def-5a">Hueco 1 (2.5)</label>
+              <input type="text" id="def-5a" data-field="def5a" data-mirror="mirror-def5a" data-placeholder="(Hueco 1)" autocomplete="off">
+            </div>
+            <div class="field-group">
+              <label class="field-label" for="def-5b">Hueco 2 (2.5)</label>
+              <input type="text" id="def-5b" data-field="def5b" data-mirror="mirror-def5b" data-placeholder="(Hueco 2)" autocomplete="off">
+            </div>
+            <div class="field-group">
+              <label class="field-label" for="def-5c">Hueco 3 (2.5)</label>
+              <input type="text" id="def-5c" data-field="def5c" data-mirror="mirror-def5c" data-placeholder="(Hueco 3)" autocomplete="off">
+            </div>
+          </div>
+        </article>
+
+        <!-- 2.6 -->
+        <article class="def-card">
+          <p class="def-sentence">
+            <span class="def-num">2.6</span>
+            Al encender el equipo, la
+            <span class="blank-preview blank-preview--empty" id="mirror-def6a">(Hueco 1)</span>
+            realiza las comprobaciones iniciales del hardware e inicia la carga del
+            <span class="blank-preview blank-preview--empty" id="mirror-def6b">(Hueco 2)</span>,
+            software principal que gestiona los recursos del ordenador y permite trabajar con las aplicaciones.
+          </p>
+          <div class="def-inputs">
+            <div class="field-group">
+              <label class="field-label" for="def-6a">Hueco 1 (2.6)</label>
+              <input type="text" id="def-6a" data-field="def6a" data-mirror="mirror-def6a" data-placeholder="(Hueco 1)" autocomplete="off">
+            </div>
+            <div class="field-group">
+              <label class="field-label" for="def-6b">Hueco 2 (2.6)</label>
+              <input type="text" id="def-6b" data-field="def6b" data-mirror="mirror-def6b" data-placeholder="(Hueco 2)" autocomplete="off">
+            </div>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- ACTIVIDAD 3 -->
+    <section class="activity-section" id="actividad-3" aria-labelledby="heading-act-3">
+      <div class="activity-head">
+        <span class="step-badge" aria-hidden="true">3</span>
+        <div class="activity-title-wrap">
+          <h2 id="heading-act-3">Unidades de información y periféricos</h2>
+          <p class="section-desc">
+            Realiza los cálculos de capacidad digital y clasifica dispositivos periféricos según el sentido de la información.
+          </p>
+        </div>
+      </div>
+
+      <div class="qa-subsection">
+        <h3 class="subsection-heading">A. Conversión de unidades digitales</h3>
+        <div class="calc-grid">
+          <div class="field-group">
+            <label class="field-label" for="calc-1">3.1 ¿Cuántos bits (b) hay en 4 bytes (B)?</label>
+            <span class="field-hint">Indica el resultado numérico en bits.</span>
+            <input type="text" id="calc-1" data-field="calc1" autocomplete="off">
+          </div>
+          <div class="field-group">
+            <label class="field-label" for="calc-2">3.2 ¿Cuántos bytes (B) hay en 5 kilobytes (KB)?</label>
+            <span class="field-hint">Toma 1 KB como aproximadamente 1.000 B.</span>
+            <input type="text" id="calc-2" data-field="calc2" autocomplete="off">
+          </div>
+          <div class="field-group">
+            <label class="field-label" for="calc-3">3.3 ¿Cuántos megabytes (MB) hay en 3 gigabytes (GB)?</label>
+            <span class="field-hint">Toma 1 GB como aproximadamente 1.000 MB.</span>
+            <input type="text" id="calc-3" data-field="calc3" autocomplete="off">
+          </div>
+        </div>
+      </div>
+
+      <div class="qa-subsection">
+        <h3 class="subsection-heading">B. Clasificación de periféricos</h3>
+        <div class="qa-list">
+          <div class="qa-item">
+            <div class="field-group">
+              <label class="field-label" for="perif-1">3.4 Cita dos periféricos de entrada y explica brevemente qué información introducen en el ordenador.</label>
+              <textarea id="perif-1" data-field="perif1"></textarea>
+              <div class="print-only-answer" id="print-perif-1"></div>
+            </div>
+          </div>
+          <div class="qa-item">
+            <div class="field-group">
+              <label class="field-label" for="perif-2">3.5 Cita dos periféricos de salida y explica cómo muestran o extraen la información hacia el exterior.</label>
+              <textarea id="perif-2" data-field="perif2"></textarea>
+              <div class="print-only-answer" id="print-perif-2"></div>
+            </div>
+          </div>
+          <div class="qa-item">
+            <div class="field-group">
+              <label class="field-label" for="perif-3">3.6 Cita un dispositivo que sea de entrada y salida a la vez, y justifica por qué cumple ambas funciones.</label>
+              <textarea id="perif-3" data-field="perif3"></textarea>
+              <div class="print-only-answer" id="print-perif-3"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ACTIVIDAD 4 -->
+    <section class="activity-section" id="actividad-4" aria-labelledby="heading-act-4">
+      <div class="activity-head">
+        <span class="step-badge" aria-hidden="true">4</span>
+        <div class="activity-title-wrap">
+          <h2 id="heading-act-4">Preguntas de respuesta corta</h2>
+          <p class="section-desc">
+            Explica con tus propias palabras los siguientes conceptos fundamentales de arquitectura, arranque, refrigeración y conectividad.
+          </p>
+        </div>
+      </div>
+
+      <div class="qa-list">
+        <div class="qa-item">
+          <div class="field-group">
+            <label class="field-label" for="qa-1">4.1 Refrigeración: ¿Por qué es necesario refrigerar el microprocesador y qué elementos componen su sistema de refrigeración?</label>
+            <textarea id="qa-1" data-field="qa1"></textarea>
+            <div class="print-only-answer" id="print-qa-1"></div>
+          </div>
+        </div>
+
+        <div class="qa-item">
+          <div class="field-group">
+            <label class="field-label" for="qa-2">4.2 BIOS: ¿Qué es la BIOS, dónde se encuentra alojada y qué función cumple durante el encendido del ordenador?</label>
+            <textarea id="qa-2" data-field="qa2"></textarea>
+            <div class="print-only-answer" id="print-qa-2"></div>
+          </div>
+        </div>
+
+        <div class="qa-item">
+          <div class="field-group">
+            <label class="field-label" for="qa-3">4.3 Sistema operativo: ¿Qué es un sistema operativo, qué tareas principales realiza y qué dos ejemplos conoces?</label>
+            <textarea id="qa-3" data-field="qa3"></textarea>
+            <div class="print-only-answer" id="print-qa-3"></div>
+          </div>
+        </div>
+
+        <div class="qa-item">
+          <div class="field-group">
+            <label class="field-label" for="qa-4">4.4 Almacenamiento SSD frente a HDD: ¿Qué ventajas ofrece un disco de estado sólido (SSD) frente a un disco duro mecánico convencional y cuál suele ser su inconveniente?</label>
+            <textarea id="qa-4" data-field="qa4"></textarea>
+            <div class="print-only-answer" id="print-qa-4"></div>
+          </div>
+        </div>
+
+        <div class="qa-item">
+          <div class="field-group">
+            <label class="field-label" for="qa-5">4.5 Conectores y puertos: Indica para qué sirve cada uno de estos puertos o conectores: USB, HDMI (o VGA), SATA y RJ45.</label>
+            <textarea id="qa-5" data-field="qa5"></textarea>
+            <div class="print-only-answer" id="print-qa-5"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Delivery / Export Panel -->
+    <section class="delivery-panel no-print" aria-labelledby="heading-export">
+      <div class="activity-title-wrap">
+        <h2 id="heading-export">Entrega y exportación en PDF</h2>
+        <p class="section-desc">
+          Revisa el resumen de tu trabajo antes de generar el documento PDF para enviarlo al profesor.
+        </p>
+      </div>
+
+      <ul class="summary-list">
+        <li class="summary-row">
+          <span class="summary-key">Alumno/a</span>
+          <span class="summary-val" id="summary-student">Sin especificar</span>
+        </li>
+        <li class="summary-row">
+          <span class="summary-key">Grupo y fecha</span>
+          <span class="summary-val" id="summary-meta">Sin especificar</span>
+        </li>
+        <li class="summary-row">
+          <span class="summary-key">Respuestas completadas</span>
+          <span class="summary-val" id="summary-progress">0 / 38</span>
+        </li>
+      </ul>
+
+      <div class="inset inset--warning feedback-box" id="header-warning">
+        <p>
+          Faltan datos en la cabecera (Nombre, Grupo o Fecha). Puedes generar el PDF igualmente, pero se recomienda completarlos para que el profesor identifique tu entrega.
+        </p>
+      </div>
+
+      <div class="action-row">
+        <button type="button" class="button" id="btn-export-pdf" onclick="exportToPdf()">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true">
+            <path d="M6 9V2h12v7"/>
+            <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/>
+            <rect x="6" y="14" width="12" height="8"/>
+          </svg>
+          Descargar / Imprimir en PDF
+        </button>
+
+        <button type="button" class="button button--secondary" id="btn-export-txt" onclick="exportAsText()">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+            <polyline points="7 10 12 15 17 10"/>
+            <line x1="12" y1="15" x2="12" y2="3"/>
+          </svg>
+          Descargar copia de respaldo (.txt)
+        </button>
+      </div>
+
+      <div class="inset inset--positive feedback-box" id="export-feedback">
+        <p id="export-feedback-text">
+          Se ha abierto el cuadro de impresión del sistema. En «Destino» o «Impresora», selecciona «Guardar como PDF» para guardar tu ficha resuelta.
+        </p>
+      </div>
+    </section>
+
+    <p class="source-note">
+      Material elaborado a partir de los contenidos de referencia «El ordenador: hardware y software» (información digital, componentes internos, periféricos y puertos de comunicación).
+    </p>
+  </main>
+
+  <api-shim></api-shim>
+  <script>
+    const TOTAL_ACTIVITY_FIELDS = 38;
+    const META_FIELDS = ['studentName', 'studentGroup', 'studentDate'];
+    let worksheetState = {};
+    let saveTimer = null;
+
+    function collectInputs() {
+      return Array.from(document.querySelectorAll('[data-field]'));
+    }
+
+    function updateMirrorsAndBadges() {
+      const inputs = collectInputs();
+      let answeredCount = 0;
+
+      inputs.forEach(function (el) {
+        const val = (el.value || '').trim();
+        const key = el.getAttribute('data-field');
+        const isMeta = META_FIELDS.indexOf(key) !== -1;
+
+        if (val.length > 0) {
+          el.classList.add('is-filled');
+          if (!isMeta) answeredCount += 1;
+        } else {
+          el.classList.remove('is-filled');
+        }
+
+        // Hardware badge
+        const hwNum = el.getAttribute('data-hw');
+        if (hwNum) {
+          const badge = document.getElementById('hw-badge-' + hwNum);
+          if (badge) {
+            if (val.length > 0) {
+              badge.textContent = 'Respondido';
+              badge.classList.add('hw-state-badge--done');
+            } else {
+              badge.textContent = 'Pendiente';
+              badge.classList.remove('hw-state-badge--done');
+            }
+          }
+        }
+
+        // Definition inline preview mirror
+        const mirrorId = el.getAttribute('data-mirror');
+        if (mirrorId) {
+          const mirrorEl = document.getElementById(mirrorId);
+          if (mirrorEl) {
+            const fallback = el.getAttribute('data-placeholder') || '(…)';
+            if (val.length > 0) {
+              mirrorEl.textContent = val;
+              mirrorEl.classList.remove('blank-preview--empty');
+            } else {
+              mirrorEl.textContent = fallback;
+              mirrorEl.classList.add('blank-preview--empty');
+            }
+          }
+        }
+
+        // Print mirror for textareas
+        if (el.tagName === 'TEXTAREA') {
+          const printMirror = document.getElementById('print-' + el.id);
+          if (printMirror) {
+            if (val.length > 0) {
+              printMirror.textContent = el.value;
+              printMirror.classList.remove('print-only-answer--empty');
+            } else {
+              printMirror.textContent = 'Sin respuesta.';
+              printMirror.classList.add('print-only-answer--empty');
+            }
+          }
+        }
+      });
+
+      // Update progress UI
+      const progressText = document.getElementById('progress-text');
+      const progressFill = document.getElementById('progress-fill');
+      const progressWrap = document.getElementById('progress-bar-wrap');
+      const summaryProgress = document.getElementById('summary-progress');
+
+      if (progressText) {
+        progressText.textContent = `${answeredCount} de ${TOTAL_ACTIVITY_FIELDS} respuestas completadas`;
+      }
+      if (progressFill) {
+        const pct = Math.min(100, Math.round((answeredCount / TOTAL_ACTIVITY_FIELDS) * 100));
+        progressFill.style.width = `${pct}%`;
+      }
+      if (progressWrap) {
+        progressWrap.setAttribute('aria-valuenow', String(answeredCount));
+      }
+      if (summaryProgress) {
+        summaryProgress.textContent = `${answeredCount} / ${TOTAL_ACTIVITY_FIELDS}`;
+      }
+
+      // Update summary metadata
+      const nameEl = document.getElementById('student-name');
+      const groupEl = document.getElementById('student-group');
+      const dateEl = document.getElementById('student-date');
+      const summaryStudent = document.getElementById('summary-student');
+      const summaryMeta = document.getElementById('summary-meta');
+      const headerWarning = document.getElementById('header-warning');
+
+      const nameVal = nameEl ? nameEl.value.trim() : '';
+      const groupVal = groupEl ? groupEl.value.trim() : '';
+      const dateVal = dateEl ? dateEl.value.trim() : '';
+
+      if (summaryStudent) {
+        summaryStudent.textContent = nameVal || 'Sin especificar';
+      }
+      if (summaryMeta) {
+        const parts = [];
+        if (groupVal) parts.push(`Grupo: ${groupVal}`);
+        if (dateVal) parts.push(`Fecha: ${dateVal}`);
+        summaryMeta.textContent = parts.length > 0 ? parts.join(' · ') : 'Sin especificar';
+      }
+      if (headerWarning) {
+        if (!nameVal || !groupVal || !dateVal) {
+          headerWarning.classList.add('is-visible');
+        } else {
+          headerWarning.classList.remove('is-visible');
+        }
+      }
+    }
+
+    async function persistStateNow() {
+      const statusEl = document.getElementById('save-status');
+      const stateToSave = {};
+      collectInputs().forEach(function (el) {
+        const key = el.getAttribute('data-field');
+        if (key) {
+          stateToSave[key] = el.value || '';
+        }
+      });
+      worksheetState = stateToSave;
+
+      if (window.notebookAppApi && typeof window.notebookAppApi.setAppState === 'function') {
+        try {
+          await window.notebookAppApi.setAppState(worksheetState);
+          if (statusEl) statusEl.textContent = 'Respuestas guardadas';
+        } catch (err) {
+          if (statusEl) statusEl.textContent = 'Listo en pantalla';
+        }
+      } else {
+        if (statusEl) statusEl.textContent = 'Listo en pantalla';
+      }
+    }
+
+    function schedulePersist() {
+      const statusEl = document.getElementById('save-status');
+      if (statusEl) statusEl.textContent = 'Guardando…';
+      if (saveTimer) clearTimeout(saveTimer);
+      saveTimer = setTimeout(function () {
+        persistStateNow();
+      }, 250);
+    }
+
+    function handleFieldInput() {
+      updateMirrorsAndBadges();
+      schedulePersist();
+    }
+
+    function exportToPdf() {
+      updateMirrorsAndBadges();
+      persistStateNow();
+
+      const feedback = document.getElementById('export-feedback');
+      const feedbackText = document.getElementById('export-feedback-text');
+      if (feedback && feedbackText) {
+        feedbackText.textContent = `Se ha iniciado la exportación a PDF. En la ventana de impresión del navegador, selecciona «Guardar como PDF» como destino para descargar el documento y enviarlo al profesor.`;
+        feedback.classList.add('is-visible');
+      }
+
+      if (typeof window.print === 'function') {
+        window.print();
+      }
+    }
+
+    function buildTextSummary() {
+      const getVal = function (id) {
+        const el = document.getElementById(id);
+        return el && el.value.trim() ? el.value.trim() : '(Sin respuesta)';
+      };
+
+      const lines = [];
+      lines.push(`FICHA DE ACTIVIDADES: EL ORDENADOR - HARDWARE Y SOFTWARE`);
+      lines.push(`=======================================================`);
+      lines.push(`Alumno/a: ${getVal('student-name')}`);
+      lines.push(`Grupo: ${getVal('student-group')}`);
+      lines.push(`Fecha: ${getVal('student-date')}`);
+      lines.push(``);
+      lines.push(`ACTIVIDAD 1. IDENTIFICACIÓN DE ELEMENTOS DE HARDWARE`);
+      lines.push(`----------------------------------------------------`);
+      for (let i = 1; i <= 15; i += 1) {
+        lines.push(`${i}. ${getVal('hw-' + i)}`);
+      }
+      lines.push(``);
+      lines.push(`ACTIVIDAD 2. COMPLETAR DEFINICIONES`);
+      lines.push(`-----------------------------------`);
+      lines.push(`2.1: ${getVal('def-1a')} / ${getVal('def-1b')}`);
+      lines.push(`2.2: ${getVal('def-2a')} / ${getVal('def-2b')}`);
+      lines.push(`2.3: ${getVal('def-3a')} / ${getVal('def-3b')}`);
+      lines.push(`2.4: ${getVal('def-4a')} / ${getVal('def-4b')}`);
+      lines.push(`2.5: ${getVal('def-5a')} / ${getVal('def-5b')} / ${getVal('def-5c')}`);
+      lines.push(`2.6: ${getVal('def-6a')} / ${getVal('def-6b')}`);
+      lines.push(``);
+      lines.push(`ACTIVIDAD 3. UNIDADES Y PERIFÉRICOS`);
+      lines.push(`-----------------------------------`);
+      lines.push(`3.1 (4 B en bits): ${getVal('calc-1')}`);
+      lines.push(`3.2 (5 KB en bytes): ${getVal('calc-2')}`);
+      lines.push(`3.3 (3 GB en MB): ${getVal('calc-3')}`);
+      lines.push(`3.4 (Periféricos de entrada):\n${getVal('perif-1')}`);
+      lines.push(`3.5 (Periféricos de salida):\n${getVal('perif-2')}`);
+      lines.push(`3.6 (Periférico de E/S):\n${getVal('perif-3')}`);
+      lines.push(``);
+      lines.push(`ACTIVIDAD 4. PREGUNTAS DE RESPUESTA CORTA`);
+      lines.push(`-----------------------------------------`);
+      lines.push(`4.1 (Refrigeración):\n${getVal('qa-1')}`);
+      lines.push(`4.2 (BIOS):\n${getVal('qa-2')}`);
+      lines.push(`4.3 (Sistema operativo):\n${getVal('qa-3')}`);
+      lines.push(`4.4 (SSD frente a HDD):\n${getVal('qa-4')}`);
+      lines.push(`4.5 (Conectores y puertos):\n${getVal('qa-5')}`);
+
+      return lines.join('\n');
+    }
+
+    function exportAsText() {
+      const content = buildTextSummary();
+      const nameEl = document.getElementById('student-name');
+      const rawName = nameEl && nameEl.value.trim() ? nameEl.value.trim().toLowerCase().replace(/[^a-z0-9]+/g, '_') : 'alumno';
+      const filename = `ficha_hardware_software_${rawName}.txt`;
+
+      if (window.notebookAppApi && typeof window.notebookAppApi.triggerFileDownload === 'function') {
+        window.notebookAppApi.triggerFileDownload({
+          content: content,
+          contentType: 'text/plain',
+          encoding: 'UTF-8',
+          filename: filename
+        });
+      } else {
+        const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      }
+
+      const feedback = document.getElementById('export-feedback');
+      const feedbackText = document.getElementById('export-feedback-text');
+      if (feedback && feedbackText) {
+        feedbackText.textContent = `Se ha descargado una copia de respaldo en texto (${filename}). Recuerda usar el botón «Descargar / Imprimir en PDF» para la entrega en PDF.`;
+        feedback.classList.add('is-visible');
+      }
+    }
+
+    function resetWorksheet(btn) {
+      if (!btn) return;
+      if (btn.dataset.armed !== 'true') {
+        btn.dataset.armed = 'true';
+        btn.classList.add('button--danger-armed');
+        btn.textContent = 'Pulsa de nuevo para borrar';
+        setTimeout(function () {
+          if (btn.dataset.armed === 'true') {
+            btn.dataset.armed = 'false';
+            btn.classList.remove('button--danger-armed');
+            btn.textContent = 'Limpiar respuestas';
+          }
+        }, 4000);
+        return;
+      }
+
+      btn.dataset.armed = 'false';
+      btn.classList.remove('button--danger-armed');
+      btn.textContent = 'Limpiar respuestas';
+
+      collectInputs().forEach(function (el) {
+        el.value = '';
+      });
+      setDefaultDateIfEmpty();
+      updateMirrorsAndBadges();
+      persistStateNow();
+
+      const feedback = document.getElementById('export-feedback');
+      if (feedback) feedback.classList.remove('is-visible');
+    }
+
+    function setDefaultDateIfEmpty() {
+      const dateEl = document.getElementById('student-date');
+      if (dateEl && !dateEl.value) {
+        const now = new Date();
+        const yyyy = now.getFullYear();
+        const mm = String(now.getMonth() + 1).padStart(2, '0');
+        const dd = String(now.getDate()).padStart(2, '0');
+        dateEl.value = `${yyyy}-${mm}-${dd}`;
+      }
+    }
+
+    async function initWorksheet() {
+      collectInputs().forEach(function (el) {
+        el.addEventListener('input', handleFieldInput);
+        el.addEventListener('change', handleFieldInput);
+      });
+
+      let saved = null;
+      if (window.notebookAppApi && typeof window.notebookAppApi.getAppState === 'function') {
+        try {
+          saved = await window.notebookAppApi.getAppState();
+        } catch (err) {
+          saved = null;
+        }
+      }
+
+      if (saved && typeof saved === 'object') {
+        collectInputs().forEach(function (el) {
+          const key = el.getAttribute('data-field');
+          if (key && typeof saved[key] === 'string') {
+            el.value = saved[key];
+          }
+        });
+      }
+
+      setDefaultDateIfEmpty();
+      updateMirrorsAndBadges();
+
+      if (window.notebookAppApi && typeof window.notebookAppApi.notifyAppReady === 'function') {
+        window.notebookAppApi.notifyAppReady();
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', initWorksheet);
+  </script>
+</body>
+</html>
